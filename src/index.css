@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Roca Two';
+  src: url('/fonts/Roca_Two_Bold.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --ring: theme(colors.gold);
+}
+
+* {
+  font-family: Quicksand, Inter, system-ui, sans-serif;
+}
+
+/* Florzinha de canto sutil */
+.decor-corner {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+      120px 120px at 95% 5%,
+      rgba(195, 174, 136, 0.18),
+      transparent 60%
+    ),
+    radial-gradient(
+      140px 140px at 5% 95%,
+      rgba(195, 174, 136, 0.12),
+      transparent 60%
+    );
+}
+
+/* Oculta a barra de rolagem em navegadores modernos */
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  -ms-overflow-style: none; /* IE e Edge */
+  scrollbar-width: none; /* Firefox */
+}
