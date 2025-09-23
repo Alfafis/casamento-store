@@ -1,4 +1,5 @@
 import { Footer } from './Footer'
+import { ScrollIndicator } from './ScrollIndicator'
 
 interface ContainerProps {
   children: React.ReactNode
@@ -16,9 +17,16 @@ export const Container: React.FC<ContainerProps> = ({ children }) => {
         />
         <div
           className="box-border h-full max-h-dvh w-full overflow-y-auto rounded-soft border-4 border-[#a0af9b] p-4 sm:p-8 md:p-12"
-          style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' }}
+          style={{
+            touchAction: 'pan-y',
+            WebkitOverflowScrolling: 'touch',
+            position: 'relative'
+          }}
+          id="container-scroll"
         >
           {children}
+          {/* Scroll indicator for small screens */}
+          <ScrollIndicator />
         </div>
       </main>
       <Footer />
