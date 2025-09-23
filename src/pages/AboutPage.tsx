@@ -24,7 +24,7 @@ const AboutPage = () => {
               Abrir no Google Maps
             </a>
             <iframe
-              className="w-full h-72 rounded-2xl border border-sage/20"
+              className="w-full h-72 rounded-soft border border-sage/20"
               loading="lazy"
               allowFullScreen
               src={maps + '&output=embed'}

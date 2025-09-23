@@ -4,6 +4,7 @@ import ConfirmPage from './pages/ConfirmPage';
 import GiftPage from './pages/GiftPage';
 import HomePage from './pages/HomePage';
 import NotFound from './pages/NotFound';
+import { PaymentPage } from './pages/PaymentPage';
 
 // const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ const App = () => (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/lista-de-presentes" element={<GiftPage />} />
+      <Route path="/pagar-presente/:id" element={<PaymentPage />} />
       <Route path="/confirmar-presenca" element={<ConfirmPage />} />
       <Route path="/sobre-o-evento" element={<AboutPage />} />
 

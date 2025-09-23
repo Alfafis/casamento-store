@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const targetDate = new Date('2025-10-22T17:00:00-03:00'); // fixa timezone
+const targetDate = new Date('2025-10-22T17:00:00-03:00'); // Horário de São Paulo (GMT-3)
 
 const getTimeRemaining = () => {
   const now = new Date();

@@ -55,7 +55,8 @@ export async function sendRSVP(payload: {
   observacoes?: string;
 }): Promise<void> {
   try {
-    const { data } = await http.post<OK | ERR>('', {
+    const url = withAction('rsvp');
+    const { data } = await http.post<OK | ERR>(url, {
       type: 'rsvp',
       ...payload,
     });
@@ -79,7 +80,8 @@ export async function sendGift(payload: {
   mensagem?: string;
 }): Promise<void> {
   try {
-    const { data } = await http.post<OK | ERR>('', {
+    const url = withAction('gift');
+    const { data } = await http.post<OK | ERR>(url, {
       type: 'presente',
       status: 'reservado',
       ...payload,

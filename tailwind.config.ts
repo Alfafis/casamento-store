@@ -57,7 +57,7 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
-        soft: '0 10px 30px rgba(0,0,0,0.08)',
+        soft: '6px',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',

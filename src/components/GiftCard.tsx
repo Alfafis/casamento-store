@@ -1,22 +1,21 @@
 import { Gift } from '@/services/types';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './Button';
-import { PixModal } from './PixModal';
 
 export const GiftCard: React.FC<Gift> = ({ id, titulo, valor, imagem }) => {
-  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   return (
-    <div className="bg-white border-2 border-gold/30 rounded-[6px] p-4 cursor-pointer flex max-w-xs flex-col justify-between items-center">
+    <div className="bg-white border-2 border-gold/30 rounded-soft p-4 cursor-pointer flex max-w-xs flex-col justify-between items-center">
       {imagem && (
         <img
           src={imagem}
           alt={titulo}
-          className="w-full h-40 object-contain rounded-2xl mb-6"
+          className="w-full h-40 object-contain rounded-soft mb-6"
         />
       )}
       <div className="flex flex-col gap-2 items-center">
         <h3
-          className="text-xl text-sage mb-2 text-center max-w-8/10"
+          className="text-xl text-sage mb-2 text-center max-w-10/12"
           title={titulo}
         >
           {titulo}
@@ -26,16 +25,10 @@ export const GiftCard: React.FC<Gift> = ({ id, titulo, valor, imagem }) => {
         </p>
         <Button
           text="Escolher este presente"
-          onClick={() => setOpen(true)}
+          onClick={() => navigate(`/pagar-presente/${id}`)}
           className="w-11/12"
         />
       </div>
-      {open && (
-        <PixModal
-          onClose={() => setOpen(false)}
-          item={{ id, titulo, valor, imagem, ativo: 'sim' }}
-        />
-      )}
     </div>
   );
 };
