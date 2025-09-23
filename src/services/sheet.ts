@@ -71,11 +71,12 @@ export async function sendGift(payload: {
   itemId: string
   mensagem?: string
   timestamp: string
+  status: string
 }) {
   const r = await fetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <- evita preflight
-    body: JSON.stringify({ type: 'presente', status: 'reservado', ...payload })
+    body: JSON.stringify({ type: 'presente', ...payload })
   })
   const j = await r.json().catch(() => ({}))
   if (!j?.ok) throw new Error(j?.error || 'Falha ao registrar presente')

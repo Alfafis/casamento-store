@@ -111,7 +111,9 @@ export const PaymentPage: React.FC = () => {
         valor: item.valor,
         nome: nome.trim(),
         email: email.trim(),
-        mensagem: mensagem.trim()
+        mensagem: mensagem.trim(),
+        timestamp: new Date().toISOString(),
+        status: 'pendente'
       })
       setSent(true)
     } catch (err) {
