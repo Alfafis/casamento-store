@@ -37,7 +37,7 @@ function Digit({ value, label }: { value: number; label: string }) {
     <div className="text-center flip w-20 select-none">
       <span
         className={[
-          'block text-6xl font-bold text-gold flip-card',
+          'block text-4xl md:text-6xl font-bold text-gold flip-card',
           phase === 'out' ? 'animate-flip-out' : '',
           phase === 'in' ? 'animate-flip-in' : '',
         ].join(' ')}
@@ -58,7 +58,7 @@ export const Countdown = () => {
   }, []);
 
   return (
-    <div className="flex justify-center gap-6 my-12">
+    <div className="flex justify-center md:gap-6 my-12">
       <Digit value={time.days} label="dias" />
       <Digit value={time.hours} label="horas" />
       <Digit value={time.minutes} label="min" />
