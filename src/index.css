@@ -78,3 +78,24 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+/* Correções específicas para iOS */
+@supports (-webkit-touch-callout: none) {
+  html,
+  body {
+    height: -webkit-fill-available;
+    min-height: 100dvh;
+  }
+
+  /* Previne bounce scroll no iOS */
+  body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ajusta o container de scroll para iOS */
+  #container-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
