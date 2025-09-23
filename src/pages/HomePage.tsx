@@ -14,8 +14,7 @@ const HomePage = () => {
 
   return (
     <Container>
-      {/* <section className="mb-10 flex flex-col items-center justify-start gap-4 lg:mb-0"> */}
-      <div className="mt-16 flex flex-col gap-2 text-center lg:mb-6">
+      <div className="flex flex-col gap-2 text-center lg:mb-6">
         <h1 className="font-pinyon text-7xl text-sage md:text-7xl lg:text-8xl">
           Rafael
         </h1>
@@ -56,7 +55,6 @@ const HomePage = () => {
           ))}
         </div>
       </div>
-      {/* </section> */}
     </Container>
   )
 }
