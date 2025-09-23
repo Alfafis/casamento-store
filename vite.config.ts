@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
         rewrite: (p) =>
           p.replace(
             /^\/gas/,
-            '/macros/s/AKfycbyeO5uNN-T09045jsEN7CPAdUF765MtHZ4TUugu4cCQOidCW_vspMw3P013UDCdTR_6dQ/exec'
+            '/macros/s/AKfycbyWlsuPGDhLbx2XQ0tTqnmljGe-IQLkxhOM6oFyUsMnEhr_PeaYXko882lLpb0lCiKIrw/exec'
           ),
       },
     },

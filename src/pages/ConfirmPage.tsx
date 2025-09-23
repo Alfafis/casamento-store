@@ -12,7 +12,7 @@ import { z } from 'zod';
 const schema = z.object({
   nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   email: z.string().email('E-mail inválido'),
-  telefone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos'),
+  celular: z.string().min(10, 'Celular deve ter pelo menos 10 dígitos'),
   qtdeConvidados: z.coerce
     .number()
     .min(0, 'Mínimo 0')
@@ -45,7 +45,7 @@ const ConfirmPage = () => {
       await sendRSVP({
         nome: data.nome,
         email: data.email,
-        telefone: data.telefone,
+        celular: data.celular,
         qtdeConvidados: data.qtdeConvidados,
         convidados,
         observacoes: data.observacoes,
@@ -114,14 +114,14 @@ const ConfirmPage = () => {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="telefone" className="font-medium">
-            Telefone *
+          <label htmlFor="celular" className="font-medium">
+            Celular *
           </label>
           <Input
-            id="telefone"
+            id="celular"
             placeholder="ex: (11) 91234-5678"
-            error={errors.telefone?.message}
-            {...register('telefone')}
+            error={errors.celular?.message}
+            {...register('celular')}
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -163,9 +163,10 @@ const ConfirmPage = () => {
             {...register('observacoes')}
           />
         </div>
+
         <Button
           type="submit"
-          text={loading ? 'Enviando...' : 'Enviar confirmação'}
+          text={'Enviar confirmação'}
           className="md:col-span-2"
           disabled={loading}
         />

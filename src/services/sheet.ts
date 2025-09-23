@@ -49,53 +49,33 @@ export async function getGifts(): Promise<Gift[]> {
 export async function sendRSVP(payload: {
   nome: string;
   email: string;
-  telefone: string;
+  celular: string;
   qtdeConvidados: number;
   convidados: string[];
   observacoes?: string;
-}): Promise<void> {
-  try {
-    const url = withAction('rsvp');
-    const { data } = await http.post<OK | ERR>(url, {
-      type: 'rsvp',
-      ...payload,
-    });
-    if (!data?.ok)
-      throw new Error(
-        ('error' in data && data.error) || 'Falha ao enviar RSVP'
-      );
-  } catch (err: any) {
-    const msg = err?.response?.data?.error || err?.message || 'Erro no RSVP';
-    console.error('[sendRSVP] ', msg, err?.response?.data);
-    throw new Error(msg);
-  }
+}) {
+  const r = await fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <- evita preflight
+    body: JSON.stringify({ type: 'rsvp', ...payload }),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!j?.ok) throw new Error(j?.error || 'Falha ao enviar RSVP');
 }
 
 export async function sendGift(payload: {
-  itemId: string;
-  itemTitulo: string;
-  valor: number;
   nome?: string;
   email?: string;
+  valor: number;
+  itemId: string;
+  itemTitulo: string;
   mensagem?: string;
-}): Promise<void> {
-  try {
-    const url = withAction('gift');
-    const { data } = await http.post<OK | ERR>(url, {
-      type: 'presente',
-      status: 'reservado',
-      ...payload,
-    });
-    if (!data?.ok)
-      throw new Error(
-        ('error' in data && data.error) || 'Falha ao registrar presente'
-      );
-  } catch (err: any) {
-    const msg =
-      err?.response?.data?.error ||
-      err?.message ||
-      'Erro no registro de presente';
-    console.error('[sendGift] ', msg, err?.response?.data);
-    throw new Error(msg);
-  }
+}) {
+  const r = await fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // <- evita preflight
+    body: JSON.stringify({ type: 'presente', status: 'reservado', ...payload }),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!j?.ok) throw new Error(j?.error || 'Falha ao registrar presente');
 }
