@@ -122,7 +122,7 @@ export const PaymentPage: React.FC = () => {
       <Back onClick={() => navigate(-1)} />
       <div className="mt-16 flex flex-col gap-4 items-center max-w-md mx-auto">
         <h3 className="text-center text-xl text-sage mb-2">
-          Presentear: {item.titulo}
+          <strong>Presentear:</strong> {item.titulo}
         </h3>
         <p className="text-center text-2xl font-semibold text-gold">
           R$ {item.valor.toFixed(2)}

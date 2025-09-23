@@ -68,8 +68,10 @@ const GiftPage = () => {
     <Container>
       <Back onClick={() => navigate(-1)} />
       <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-semibold">Lista de Presentes</h3>
+        <div className="flex items-center justify-between mt-16">
+          <h3 className="text-center text-xl text-sage mb-2 font-semibold">
+            Lista de Presentes
+          </h3>
           {updating && (
             <span className="text-sm text-gray-500">Atualizando...</span>
           )}
