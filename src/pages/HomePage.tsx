@@ -14,8 +14,8 @@ const HomePage = () => {
 
   return (
     <Container>
-      <section className="flex flex-col h-full gap-4 justify-center items-center">
-        <div className="text-center flex flex-col gap-2">
+      <section className="flex flex-col h-full gap-4 justify-start items-center">
+        <div className="text-center flex flex-col gap-2 mt-16">
           <h1 className="font-pinyon text-7xl md:text-[92px] lg:text-[124px] text-sage">
             Rafael
           </h1>
