@@ -92,7 +92,7 @@ const ConfirmPage = () => {
     return (
       <Container>
         <Back onClick={() => navigate(-1)} />
-        <div className="mt-16 text-center">
+        <div className="text-center">
           <h3 className="mb-4 text-2xl text-sage">Confirmação Enviada! 💚</h3>
           <p className="mb-6 text-lg">
             Recebemos sua confirmação de presença. Obrigado!
