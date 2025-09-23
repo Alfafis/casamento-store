@@ -10,14 +10,14 @@ const AboutPage = () => {
   return (
     <Container>
       <Back onClick={() => navigate(-1)} />
-      <section className="flex flex-col gap-6 mt-16">
-        <h3 className="text-center text-xl text-sage mb-2 font-semibold">
+      <section className="mt-16 flex flex-col gap-6">
+        <h3 className="mb-2 text-center text-xl font-semibold text-sage">
           Evento & Local
         </h3>
         <p>Detalhes para você se programar.</p>
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid gap-6 md:grid-cols-2">
           <div className="card">
-            <ul className="list-disc pl-5 space-y-2">
+            <ul className="list-disc space-y-2 pl-5">
               <li>
                 Início às <b>17h00</b>
               </li>
@@ -27,7 +27,7 @@ const AboutPage = () => {
             </ul>
           </div>
           <div className="">
-            <h4 className="text-center text-xl text-sage mb-2 font-semibold">
+            <h4 className="mb-2 text-center text-xl font-semibold text-sage">
               Como chegar
             </h4>
             <p className="mb-2">{address}</p>
@@ -35,7 +35,7 @@ const AboutPage = () => {
               Abrir no Google Maps
             </a>
             <iframe
-              className="w-full h-72 rounded-soft border border-sage/20"
+              className="h-72 w-full rounded-soft border border-sage/20"
               loading="lazy"
               allowFullScreen
               src={maps + '&output=embed'}
@@ -43,10 +43,10 @@ const AboutPage = () => {
           </div>
         </div>
         <div className="mt-8 flex flex-col gap-4">
-          <h4 className="text-center text-xl text-sage font-semibold">
+          <h4 className="text-center text-xl font-semibold text-sage">
             Cardápio
           </h4>
-          <p className=" text-gray-700">
+          <p className="text-gray-700">
             Rodízio de pizza, carnes e parrilla, sobremesas, drinks, vinhos,
             champanhes e muito mais!
           </p>
@@ -61,7 +61,7 @@ const AboutPage = () => {
             </a>
           </div>
           <iframe
-            className="w-full h-96 rounded-soft border border-sage/20 mx-auto max-w-4xl"
+            className="mx-auto h-96 w-full max-w-4xl rounded-soft border border-sage/20"
             loading="lazy"
             src="https://livemenu.app/menu/65cf5b6ab4cea6006abfb1cb"
             title="Cardápio Digital"

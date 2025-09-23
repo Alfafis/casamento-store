@@ -21,9 +21,9 @@ export const Button = ({
     <button
       type={type}
       className={cn(
-        'bg-gold w-full text-white px-4 py-2 underline transition-all duration-300 hover:bg-gold-dark rounded-soft cursor-pointer font-semibold hover:scale-[102%]',
+        'w-full cursor-pointer rounded-soft bg-gold px-4 py-2 font-semibold text-white underline transition-all duration-300 hover:scale-[102%] hover:bg-gold-dark',
         (disabled || loading) &&
-          'opacity-50 cursor-not-allowed hover:scale-100',
+          'cursor-not-allowed opacity-50 hover:scale-100',
         className
       )}
       onClick={disabled || loading ? undefined : onClick}
@@ -32,7 +32,7 @@ export const Button = ({
       {loading ? (
         <span className="flex items-center justify-center">
           <svg
-            className="animate-spin h-5 w-5 mr-2 text-white"
+            className="mr-2 h-5 w-5 animate-spin text-white"
             viewBox="0 0 24 24"
           >
             <circle

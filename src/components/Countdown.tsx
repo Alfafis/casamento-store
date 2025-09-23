@@ -34,17 +34,17 @@ function Digit({ value, label }: { value: number; label: string }) {
   const show = phase === 'out' ? prev : value;
 
   return (
-    <div className="text-center flip w-20 select-none">
+    <div className="flip w-20 select-none text-center">
       <span
         className={[
-          'block text-4xl md:text-6xl font-bold text-gold flip-card',
+          'flip-card block text-4xl font-bold text-gold md:text-6xl',
           phase === 'out' ? 'animate-flip-out' : '',
           phase === 'in' ? 'animate-flip-in' : '',
         ].join(' ')}
       >
         {show}
       </span>
-      <span className="text-xs text-sageDark">{label}</span>
+      <span className="text-sageDark text-xs">{label} </span>
     </div>
   );
 }
@@ -58,11 +58,16 @@ export const Countdown = () => {
   }, []);
 
   return (
-    <div className="flex justify-center md:gap-6 my-12">
-      <Digit value={time.days} label="dias" />
-      <Digit value={time.hours} label="horas" />
-      <Digit value={time.minutes} label="min" />
-      <Digit value={time.seconds} label="seg" />
-    </div>
+    <article className="my-8 flex flex-col items-center gap-4">
+      <h2 className="text-2xl font-semibold text-gray-800 lg:text-3xl">
+        Contagem Regressiva
+      </h2>
+      <div className="flex justify-center md:gap-6">
+        <Digit value={time.days} label="dias" />
+        <Digit value={time.hours} label="horas" />
+        <Digit value={time.minutes} label="min" />
+        <Digit value={time.seconds} label="seg" />
+      </div>
+    </article>
   );
 };

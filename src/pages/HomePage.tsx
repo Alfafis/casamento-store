@@ -14,40 +14,40 @@ const HomePage = () => {
 
   return (
     <Container>
-      <section className="flex flex-col h-full gap-4 justify-start items-center">
-        <div className="text-center flex flex-col gap-2 mt-16">
-          <h1 className="font-pinyon text-7xl md:text-[92px] lg:text-[124px] text-sage">
+      <section className="flex h-full flex-col items-center justify-start gap-4">
+        <div className="mt-16 flex flex-col gap-2 text-center">
+          <h1 className="font-pinyon text-7xl text-sage md:text-[92px] lg:text-[124px]">
             Rafael
           </h1>
-          <div className="text-gold font-amsterdam text-7xl md:text-[92px]">
+          <div className="font-amsterdam text-7xl text-gold md:text-[92px]">
             &
           </div>
-          <h1 className="font-pinyon text-7xl md:text-[92px] lg:text-[124px] text-sage">
+          <h1 className="font-pinyon text-7xl text-sage md:text-[92px] lg:text-[124px]">
             Isabella
           </h1>
         </div>
-        <div className="text-center flex flex-col gap-12 items-center justify-center">
-          <p className="text-base lg:text-2xl uppercase font-medium tracking-[1.2px] text-gray-800 text-center">
+        <div className="flex flex-col items-center justify-center gap-12 text-center">
+          <p className="text-center text-base font-medium uppercase tracking-[1.2px] text-gray-800 lg:text-2xl">
             convidam para uma celebração após o casamento civil
           </p>
-          <div className="flex justify-center gap-4 items-center text-center">
-            <h2 className="border-r-[3px] pr-3 border-gold/80 text-2xl font-semibold lg:text-3xl text-gray-800">
+          <div className="flex items-center justify-center gap-4 text-center">
+            <h2 className="border-r-[3px] border-gold/80 pr-3 text-2xl font-semibold text-gray-800 lg:text-3xl">
               OUT
             </h2>
-            <h2 className="font-roca text-5xl md:text-xl lg:text-7xl text-gold pb-2">
+            <h2 className="pb-2 font-roca text-5xl text-gold md:text-xl lg:text-7xl">
               22
             </h2>
-            <h2 className="border-l-[3px] border-gold/80 pl-3 lg:text-3xl text-2xl font-semibold text-gray-800">
+            <h2 className="border-l-[3px] border-gold/80 pl-3 text-2xl font-semibold text-gray-800 lg:text-3xl">
               2025
             </h2>
           </div>
-          <p className="text-center text-sm lg:text-2xl font-medium text-gray-800">
+          <p className="text-center text-sm font-medium text-gray-800 lg:text-2xl">
             Às 17h00, no Restaurante Rancho do Boi
           </p>
         </div>
-        <div className="text-center flex flex-col gap-12 items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-12 text-center">
           <Countdown />
-          <div className="flex flex-col sm:flex-row justify-center gap-4 items-center text-center w-full">
+          <div className="flex w-full flex-col items-center justify-center gap-4 text-center sm:flex-row">
             {listButtons.map((button, index) => (
               <Button
                 key={index}

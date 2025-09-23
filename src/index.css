@@ -23,7 +23,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(
+  background:
+    radial-gradient(
       120px 120px at 95% 5%,
       rgba(195, 174, 136, 0.18),
       transparent 60%

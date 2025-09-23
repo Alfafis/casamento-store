@@ -68,8 +68,8 @@ const GiftPage = () => {
     <Container>
       <Back onClick={() => navigate(-1)} />
       <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between mt-16">
-          <h3 className="text-center text-xl text-sage mb-2 font-semibold">
+        <div className="mt-16 flex items-center justify-between">
+          <h3 className="mb-2 text-center text-xl font-semibold text-sage">
             Lista de Presentes
           </h3>
           {updating && (
@@ -80,7 +80,7 @@ const GiftPage = () => {
         {!loading && items.length === 0 && (
           <p>Nenhum item disponível no momento.</p>
         )}
-        <div className="grid justify-center md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid justify-center gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map((g) => (
             <GiftCard
               key={g.id}

@@ -65,8 +65,8 @@ const ConfirmPage = () => {
       <Container>
         <Back onClick={() => navigate(-1)} />
         <div className="mt-16 text-center">
-          <h3 className="text-2xl text-sage mb-4">Confirmação Enviada! 💚</h3>
-          <p className="text-lg mb-6">
+          <h3 className="mb-4 text-2xl text-sage">Confirmação Enviada! 💚</h3>
+          <p className="mb-6 text-lg">
             Recebemos sua confirmação de presença. Obrigado!
           </p>
           <Button text="Voltar ao início" onClick={() => navigate('/')} />
@@ -78,7 +78,7 @@ const ConfirmPage = () => {
   return (
     <Container>
       <Back onClick={() => navigate(-1)} />
-      <div className="mt-16 flex flex-col gap-2 mb-8">
+      <div className="mb-8 mt-16 flex flex-col gap-2">
         <h3 className="text-2xl font-semibold text-sage">
           Confirmação de Presença
         </h3>
@@ -88,7 +88,7 @@ const ConfirmPage = () => {
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        className="grid grid-cols-1 gap-4 md:grid-cols-2"
       >
         <div className="flex flex-col gap-1">
           <label htmlFor="nome" className="font-medium">

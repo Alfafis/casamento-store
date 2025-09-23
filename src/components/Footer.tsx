@@ -1,6 +1,6 @@
 export const Footer = () => {
   return (
-    <footer className="w-full py-2 bg-cream mt-auto">
+    <footer className="w-full bg-cream">
       <div className="container-narrow text-center text-sm text-sage">
         <p>
           Site feito com muito amor ❤ - Desenvolvido por{' '}
@@ -14,5 +14,5 @@ export const Footer = () => {
         </p>
       </div>
     </footer>
-  );
-};
+  )
+}

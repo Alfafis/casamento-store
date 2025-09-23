@@ -11,12 +11,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           {...props}
-          className={`w-full border border-sage/20 rounded-soft p-2 focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent transition disabled:opacity-50 disabled:cursor-not-allowed ${className} ${
+          className={`w-full rounded-soft border border-sage/20 p-2 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-gold disabled:cursor-not-allowed disabled:opacity-50 ${className} ${
             error ? 'border-red-500' : ''
           }`}
         />
         {error && (
-          <span className="text-red-500 text-xs mt-1 block">{error}</span>
+          <span className="mt-1 block text-xs text-red-500">{error}</span>
         )}
       </div>
     );

@@ -107,9 +107,9 @@ export const PaymentPage: React.FC = () => {
     return (
       <Container>
         <Back onClick={() => navigate(-1)} />
-        <div className="text-center py-8 mt-16">
-          <p className="text-lg text-sageDark">Presente não encontrado.</p>
-          <p className="text-sm text-sage mt-2">
+        <div className="mt-16 py-8 text-center">
+          <p className="text-sageDark text-lg">Presente não encontrado.</p>
+          <p className="mt-2 text-sm text-sage">
             Volte para a lista de presentes.
           </p>
         </div>
@@ -120,8 +120,8 @@ export const PaymentPage: React.FC = () => {
   return (
     <Container>
       <Back onClick={() => navigate(-1)} />
-      <div className="mt-16 flex flex-col gap-4 items-center max-w-md mx-auto">
-        <h3 className="text-center text-xl text-sage mb-2">
+      <div className="mx-auto mt-16 flex max-w-md flex-col items-center gap-4">
+        <h3 className="mb-2 text-center text-xl text-sage">
           <strong>Presentear:</strong> {item.titulo}
         </h3>
         <p className="text-center text-2xl font-semibold text-gold">
@@ -132,16 +132,16 @@ export const PaymentPage: React.FC = () => {
           <img
             src={qr}
             alt="QR Code PIX"
-            className="w-48 h-48 rounded-lg border border-sage/20 shadow-sm"
+            className="h-48 w-48 rounded-lg border border-sage/20 shadow-sm"
           />
         )}
 
         {/* Copia e Cola */}
-        <div className="bg-cream rounded-xl p-4 w-full border border-sage/20">
-          <p className="text-sm font-medium text-sageDark text-center mb-2">
+        <div className="w-full rounded-xl border border-sage/20 bg-cream p-4">
+          <p className="text-sageDark mb-2 text-center text-sm font-medium">
             Código PIX (Copia e Cola):
           </p>
-          <div className="text-xs text-sageDark break-all text-center select-all max-h-40 overflow-y-auto">
+          <div className="text-sageDark max-h-40 select-all overflow-y-auto break-all text-center text-xs">
             {payload || 'Gerando código Pix...'}
           </div>
         </div>
@@ -153,7 +153,7 @@ export const PaymentPage: React.FC = () => {
           className="w-full"
         />
 
-        <p className="text-center text-sm text-sage px-4">
+        <p className="px-4 text-center text-sm text-sage">
           Copie o código acima ou aponte a câmera para o QR Code no app do seu
           banco.
         </p>
@@ -178,15 +178,15 @@ export const PaymentPage: React.FC = () => {
             onChange={(e) => setMensagem(e.target.value)}
           />
 
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {error && <p className="text-center text-sm text-red-500">{error}</p>}
 
           <Button
             text={
               sent
                 ? 'Registrado! Obrigado ❤️'
                 : loading
-                ? 'Registrando...'
-                : 'Registrar presente'
+                  ? 'Registrando...'
+                  : 'Registrar presente'
             }
             onClick={handleConfirm}
             disabled={sent || loading}
