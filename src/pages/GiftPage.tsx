@@ -72,7 +72,7 @@ const GiftPage = () => {
           <h3 className="mb-2 text-center text-xl font-semibold text-sage lg:mb-8 lg:mt-8 lg:text-4xl">
             Lista de Presentes
           </h3>
-          {updating || (loading && <Loading size={30} />)}
+          {(updating || loading) && <Loading size={30} />}
         </div>
         {!loading && items.length === 0 && (
           <p>Nenhum item disponível no momento.</p>
