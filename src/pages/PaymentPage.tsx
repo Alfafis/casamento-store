@@ -105,6 +105,9 @@ export const PaymentPage: React.FC = () => {
     setLoading(true)
     setError('')
     try {
+      const now = new Date()
+      const pad = (n: number) => n.toString().padStart(2, '0')
+      const formattedTimestamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
       await sendGift({
         itemId: item.id,
         itemTitulo: item.titulo,
@@ -112,7 +115,7 @@ export const PaymentPage: React.FC = () => {
         nome: nome.trim(),
         email: email.trim(),
         mensagem: mensagem.trim(),
-        timestamp: new Date().toISOString(),
+        timestamp: formattedTimestamp,
         status: 'pendente'
       })
       setSent(true)
