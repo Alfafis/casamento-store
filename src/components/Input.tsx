@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: string;
+  error?: string
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -19,8 +19,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <span className="mt-1 block text-xs text-red-500">{error}</span>
         )}
       </div>
-    );
+    )
   }
-);
+)
 
-Input.displayName = 'Input';
+Input.displayName = 'Input'

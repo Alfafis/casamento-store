@@ -1,5 +1,5 @@
-import type { Config } from 'tailwindcss';
-import tailwindcssAnimate from 'tailwindcss-animate';
+import type { Config } from 'tailwindcss'
+import tailwindcssAnimate from 'tailwindcss-animate'
 
 const config: Config = {
   darkMode: ['class'],
@@ -7,13 +7,13 @@ const config: Config = {
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}'
   ],
   prefix: '',
   theme: {
     container: {
       center: true,
-      padding: '2rem',
+      padding: '2rem'
     },
     extend: {
       colors: {
@@ -29,20 +29,20 @@ const config: Config = {
         foreground: 'hsl(var(--foreground))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          foreground: 'hsl(var(--primary-foreground))'
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          foreground: 'hsl(var(--secondary-foreground))'
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          foreground: 'hsl(var(--destructive-foreground))'
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
+          foreground: 'hsl(var(--muted-foreground))'
+        }
       },
       fontFamily: {
         quicksand: ['Quicksand', 'Inter', 'system-ui', 'sans-serif'],
@@ -51,44 +51,44 @@ const config: Config = {
         roca: ['"Roca Two"', 'Inter', 'system-ui', 'sans-serif'],
         display: ['"Great Vibes"', 'cursive'],
         serif: ['"Cormorant Garamond"', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif']
       },
       borderRadius: {
         soft: '6px',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 4px)'
       },
       keyframes: {
         'accordion-down': {
           from: {
-            height: '0',
+            height: '0'
           },
           to: {
-            height: 'var(--radix-accordion-content-height)',
-          },
+            height: 'var(--radix-accordion-content-height)'
+          }
         },
         'accordion-up': {
           from: {
-            height: 'var(--radix-accordion-content-height)',
+            height: 'var(--radix-accordion-content-height)'
           },
           to: {
-            height: '0',
-          },
+            height: '0'
+          }
         },
         flip: {
           '0%': { transform: 'rotateX(0deg)' },
-          '100%': { transform: 'rotateX(180deg)' },
-        },
+          '100%': { transform: 'rotateX(180deg)' }
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        flip: 'flip 0.6s ease-in-out',
-      },
-    },
+        flip: 'flip 0.6s ease-in-out'
+      }
+    }
   },
-  plugins: [tailwindcssAnimate],
-};
+  plugins: [tailwindcssAnimate]
+}
 
-export default config;
+export default config

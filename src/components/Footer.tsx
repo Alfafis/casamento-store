@@ -4,14 +4,19 @@ export const Footer = () => {
       <div className="container-narrow text-center text-xs text-sage">
         <p>
           Site feito com muito amor ❤ - Desenvolvido por{' '}
-          <a
-            href="https://www.instagram.com/alfafis/"
-            className="cursor-pointer underline hover:text-gold"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            className="cursor-pointer border-none bg-transparent p-0 text-inherit underline hover:text-gold"
+            onClick={() =>
+              window.open(
+                'https://www.instagram.com/alfafis',
+                '_blank',
+                'noopener,noreferrer'
+              )
+            }
+            type="button"
           >
             Alfafis
-          </a>
+          </button>
         </p>
       </div>
     </footer>

@@ -1,10 +1,10 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import AboutPage from './pages/AboutPage';
-import ConfirmPage from './pages/ConfirmPage';
-import GiftPage from './pages/GiftPage';
-import HomePage from './pages/HomePage';
-import NotFound from './pages/NotFound';
-import { PaymentPage } from './pages/PaymentPage';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import AboutPage from './pages/AboutPage'
+import ConfirmPage from './pages/ConfirmPage'
+import GiftPage from './pages/GiftPage'
+import HomePage from './pages/HomePage'
+import NotFound from './pages/NotFound'
+import { PaymentPage } from './pages/PaymentPage'
 
 // const queryClient = new QueryClient();
 
@@ -26,6 +26,6 @@ const App = () => (
   </BrowserRouter>
   // </TooltipProvider>
   // </QueryClientProvider>
-);
+)
 
-export default App;
+export default App

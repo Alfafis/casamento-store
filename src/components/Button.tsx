@@ -1,12 +1,12 @@
-import { cn } from '@/services/util';
+import { cn } from '@/services/util'
 
 interface ButtonProps {
-  text: string;
-  className?: string;
-  onClick?: () => void | Promise<void>;
-  disabled?: boolean;
-  loading?: boolean;
-  type?: 'button' | 'submit' | 'reset';
+  text: string
+  className?: string
+  onClick?: () => void | Promise<void>
+  disabled?: boolean
+  loading?: boolean
+  type?: 'button' | 'submit' | 'reset'
 }
 
 export const Button = ({
@@ -15,7 +15,7 @@ export const Button = ({
   onClick,
   disabled,
   loading,
-  type = 'button',
+  type = 'button'
 }: ButtonProps) => {
   return (
     <button
@@ -56,5 +56,5 @@ export const Button = ({
         text
       )}
     </button>
-  );
-};
+  )
+}

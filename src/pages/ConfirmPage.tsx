@@ -1,13 +1,13 @@
-import { Back } from '@/components/Back';
-import { Button } from '@/components/Button';
-import { Container } from '@/components/Container';
-import { Input } from '@/components/Input';
-import { sendRSVP } from '@/services/sheet';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
-import { z } from 'zod';
+import { Back } from '@/components/Back'
+import { Button } from '@/components/Button'
+import { Container } from '@/components/Container'
+import { Input } from '@/components/Input'
+import { sendRSVP } from '@/services/sheet'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
+import { z } from 'zod'
 
 const schema = z.object({
   nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -18,45 +18,45 @@ const schema = z.object({
     .min(0, 'Mínimo 0')
     .max(10, 'Máximo 10 acompanhantes'),
   convidados: z.string().optional(),
-  observacoes: z.string().max(200, 'Máximo 200 caracteres').optional(),
-});
+  observacoes: z.string().max(200, 'Máximo 200 caracteres').optional()
+})
 
-type FormData = z.infer<typeof schema>;
+type FormData = z.infer<typeof schema>
 
 const ConfirmPage = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
+    reset
+  } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   async function onSubmit(data: FormData) {
-    setLoading(true);
+    setLoading(true)
     try {
       const convidados = (data.convidados || '')
         .split(/,|;|\n/)
         .map((s) => s.trim())
-        .filter(Boolean);
+        .filter(Boolean)
       await sendRSVP({
         nome: data.nome,
         email: data.email,
         celular: data.celular,
         qtdeConvidados: data.qtdeConvidados,
         convidados,
-        observacoes: data.observacoes,
-      });
-      setSubmitted(true);
-      reset();
+        observacoes: data.observacoes
+      })
+      setSubmitted(true)
+      reset()
     } catch (err) {
-      console.error('Erro ao enviar RSVP:', err);
+      console.error('Erro ao enviar RSVP:', err)
       // TODO: show error message
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -72,7 +72,7 @@ const ConfirmPage = () => {
           <Button text="Voltar ao início" onClick={() => navigate('/')} />
         </div>
       </Container>
-    );
+    )
   }
 
   return (
@@ -137,7 +137,7 @@ const ConfirmPage = () => {
             error={errors.qtdeConvidados?.message}
             {...register('qtdeConvidados', {
               valueAsNumber: true,
-              setValueAs: (v) => (v === '' ? 0 : Number(v)),
+              setValueAs: (v) => (v === '' ? 0 : Number(v))
             })}
           />
         </div>
@@ -172,7 +172,7 @@ const ConfirmPage = () => {
         />
       </form>
     </Container>
-  );
-};
+  )
+}
 
-export default ConfirmPage;
+export default ConfirmPage

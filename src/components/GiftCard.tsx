@@ -1,9 +1,9 @@
-import { Gift } from '@/services/types';
-import { useNavigate } from 'react-router-dom';
-import { Button } from './Button';
+import { Gift } from '@/services/types'
+import { useNavigate } from 'react-router-dom'
+import { Button } from './Button'
 
 export const GiftCard: React.FC<Gift> = ({ id, titulo, valor, imagem }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   return (
     <div className="flex max-w-xs cursor-pointer flex-col items-center justify-between rounded-soft border-2 border-gold/30 bg-white p-4">
       {imagem && (
@@ -30,5 +30,5 @@ export const GiftCard: React.FC<Gift> = ({ id, titulo, valor, imagem }) => {
         />
       </div>
     </div>
-  );
-};
+  )
+}
