@@ -10,8 +10,14 @@ import { useNavigate } from 'react-router'
 import { z } from 'zod'
 
 const schema = z.object({
-  nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  email: z.string().email('E-mail inválido'),
+  nome: z
+    .string()
+    .trim()
+    .min(
+      2,
+      'Nome deve ter pelo menos 2 caracteres e não pode ser apenas espaços'
+    ),
+  email: z.string().trim().email('E-mail inválido'),
   telefone: z
     .string()
     .min(14, 'Telefone deve ter pelo menos 14 caracteres')
