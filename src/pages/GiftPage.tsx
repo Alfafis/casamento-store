@@ -67,12 +67,12 @@ const GiftPage = () => {
   return (
     <Container>
       <Back onClick={() => navigate('/')} />
-      <section className="flex flex-col gap-4">
-        <div className="mt-16 flex items-center gap-4 lg:mt-8">
-          <h3 className="mb-2 mt-16 text-center text-xl font-semibold text-sage lg:mb-8 lg:mt-8 lg:text-4xl">
+      <section className="mt-16 flex flex-col gap-4 lg:mt-8">
+        <div className="flex items-center gap-4">
+          <h3 className="mb-2 text-center text-xl font-semibold text-sage lg:mb-8 lg:mt-8 lg:text-4xl">
             Lista de Presentes
           </h3>
-          {updating && <Loading size={32} />}
+          {updating && <Loading size={30} />}
         </div>
         {loading && <Loading />}
         {!loading && items.length === 0 && (
