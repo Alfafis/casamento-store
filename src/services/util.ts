@@ -1,7 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import QRCode from 'qrcode';
 import { twMerge } from 'tailwind-merge';
-import { gerarPixCopiaECola } from './pix-brcode';
 
 /**
  * Une classes condicionalmente (clsx) e resolve conflitos do Tailwind (twMerge).
@@ -29,20 +28,8 @@ export async function copy(text: string) {
   }
 }
 
-export async function gerarQRDataUrlPix(params: {
-  chave: string;
-  nome: string;
-  cidade: string;
-  valor: number;
-  descricao?: string;
-  txid?: string;
-}) {
-  const payload = gerarPixCopiaECola(params);
-  // Salve o payload se quiser mostrar a string Copia-e-Cola
-  return {
-    payload,
-    qrDataUrl: await QRCode.toDataURL(payload, { margin: 1, scale: 6 }),
-  };
+export async function toQRDataURL(payload: string) {
+  return await QRCode.toDataURL(payload, { margin: 1, scale: 6 });
 }
 
 export async function copyToClipboard(text: string): Promise<boolean> {

@@ -1,20 +1,24 @@
-// Gera Pix Copia-e-Cola (EMV) com valor e CRC16.
-// Referência: BR Code (EMV) + Pix (br.gov.bcb.pix)
-function pad2(n: number) {
-  return n.toString().padStart(2, '0');
-}
+// src/libs/pix-brcode.ts
+// Gera Pix Copia-e-Cola (EMV) ESTÁTICO (PIM=11), com valor opcional, e CRC16-IBM.
+// Compatível com Nubank / apps que validam estrito.
+
 function tlv(id: string, value: string) {
   const len = value.length.toString().padStart(2, '0');
   return id + len + value;
 }
 
-// CRC16-IBM (polynomial 0x1021) sobre toda a string até "6304"
+function removeAcentos(s: string) {
+  return s.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+}
+
+// CRC16/IBM (poly 0x1021), ASCII sobre toda a string até "6304"
 function crc16(payload: string) {
   let crc = 0xffff;
   for (let i = 0; i < payload.length; i++) {
     crc ^= payload.charCodeAt(i) << 8;
     for (let j = 0; j < 8; j++) {
-      crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+      if (crc & 0x8000) crc = (crc << 1) ^ 0x1021;
+      else crc <<= 1;
       crc &= 0xffff;
     }
   }
@@ -22,65 +26,53 @@ function crc16(payload: string) {
 }
 
 export type PixParams = {
-  chave: string; // sua chave Pix Nubank
-  nome: string; // recebedor (máx. 25)
-  cidade: string; // sem acentos (máx. 15 recomendado)
-  valor?: number; // ex.: 129.90
-  txid?: string; // até 25 chars
-  descricao?: string; // opcional (curta)
+  chave: string; // sua chave Pix (e-mail, telefone, aleatória, CPF/CNPJ)
+  nome: string; // recebedor (<= 25 chars no payload)
+  cidade: string; // <= 15 chars, sem acentos no payload
+  valor?: number; // ex.: 129.90 (ponto decimal)
+  descricao?: string; // ignorada no estático por compat, pode-se embutir em "26-02" se quiser
 };
 
-export function gerarPixCopiaECola({
+/**
+ * Gera payload EMV Pix estático (PIM=11). Inclui valor (54) se fornecido.
+ * Usa TXID "***" (estático mais compatível).
+ */
+export function gerarPixCopiaEColaEstatico({
   chave,
   nome,
   cidade,
   valor,
-  txid = 'NU' + Date.now().toString().slice(-8),
-  descricao,
 }: PixParams) {
-  // GUI do Bacen
+  // Campos do Merchant Account Information (ID 26)
   const gui = tlv('00', 'br.gov.bcb.pix');
-  // Chave Pix
-  const k = tlv('01', chave);
-  // Descrição (opcional)
-  const desc = descricao ? tlv('02', descricao) : '';
-  // Merchant Account Information (ID 26)
-  const mai = tlv('26', gui + k + desc);
+  const k = tlv('01', chave.trim());
 
-  // Merchant Category Code (52) = 0000; Currency (53)=986; Country (58)=BR
-  const mcc = tlv('52', '0000');
-  const cur = tlv('53', '986');
-  const ct = tlv('58', 'BR');
+  // Se quiser descrição, adicione "02": tlv("02", "texto-curto")
+  const mai = tlv('26', gui + k);
 
-  // Nome (59) máx. 25; Cidade (60) recomend. 15
-  const nomeLimpo = nome
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .slice(0, 25);
-  const cidadeLimpa = cidade
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .slice(0, 15);
-  const nm = tlv('59', nomeLimpo || 'RECEBEDOR');
-  const cd = tlv('60', cidadeLimpa || 'SAO PAULO');
+  const pfi = tlv('00', '01'); // Payload Format Indicator
+  const pim = tlv('01', '11'); // Point of Initiation Method: 11 = estático
 
-  // Valor (54) opcional; formate com 2 casas
-  const val = valor !== undefined ? tlv('54', valor.toFixed(2)) : '';
+  const mcc = tlv('52', '0000'); // Merchant Category Code (genérico)
+  const cur = tlv('53', '986'); // BRL
+  const amt =
+    typeof valor === 'number'
+      ? tlv('54', valor.toFixed(2)) // sempre . (ponto) e 2 casas
+      : '';
 
-  // TXID (ID 05 dentro do campo 62 - Additional Data Field Template)
-  const tx = tlv('05', txid.slice(0, 25));
+  const ctry = tlv('58', 'BR'); // País
+
+  // Nome/Cidade sem acento e tamanhos seguros
+  const nm = tlv('59', removeAcentos(nome).slice(0, 25) || 'RECEBEDOR');
+  const ct = tlv('60', removeAcentos(cidade).slice(0, 15) || 'SAO PAULO');
+
+  // Additional Data Field Template (62) com TXID "***" (estático)
+  const tx = tlv('05', '***');
   const adf = tlv('62', tx);
-
-  // Payload Format Indicator (00)=01; Point of Initiation Method (01):
-  //   - "12" = dinâmico (valor específico por transação)
-  //   - "11" = estático
-  const pfi = tlv('00', '01');
-  const pim = tlv('01', valor !== undefined ? '12' : '11');
 
   // Monta sem CRC (63) primeiro
   const semCRC =
-    pfi + pim + mai + mcc + cur + val + ct + nm + cd + adf + '6304';
+    pfi + pim + mai + mcc + cur + amt + ctry + nm + ct + adf + '6304';
   const crc = crc16(semCRC);
-
-  return semCRC + crc; // <- isto é o Copia-e-Cola
+  return semCRC + crc; // <- Copia e Cola
 }

@@ -1,7 +1,8 @@
 import { Back } from '@/components/Back';
 import { Container } from '@/components/Container';
+import { gerarPixCopiaEColaEstatico } from '@/services/pix-brcode';
 import { sendGift } from '@/services/sheet';
-import { copyToClipboard, gerarQRDataUrlPix } from '@/services/util';
+import { copyToClipboard, toQRDataURL } from '@/services/util';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '../components/Button';
@@ -46,48 +47,26 @@ export const PaymentPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // gera QR + payload quando o item carregar
   useEffect(() => {
     if (!item) return;
 
-    // 1) tentar gerar payload pelo util (Pix EMV) com valor do presente
-    gerarQRDataUrlPix({
+    // Gera payload ESTÁTICO (PIM=11, TXID=***), com valor do presente
+    const copiaECola = gerarPixCopiaEColaEstatico({
       chave: chavePix,
       nome: favorecido,
       cidade,
       valor: item.valor,
-      descricao: item.titulo,
-      txid: `GIFT-${item.id}-${Date.now() % 1e6}`,
-    })
-      .then(({ payload, qrDataUrl }) => {
-        setPayload(payload);
-        setQr(qrDataUrl);
-      })
-      .catch((err) => {
-        console.error('Erro ao gerar payload/QR Pix:', err);
+    });
+    setPayload(copiaECola);
 
-        // 2) fallback: usar template do .env (substitui {{VALOR}})
-        if (copiaColaTemplate) {
-          const p = copiaColaTemplate.includes('{{VALOR}}')
-            ? copiaColaTemplate.replace('{{VALOR}}', item.valor.toFixed(2))
-            : copiaColaTemplate;
-          setPayload(p);
-          // QR a partir do template (se ele já for um EMV válido)
-          import('qrcode').then(({ default: QRCode }) => {
-            QRCode.toDataURL(p, { margin: 1, scale: 6 })
-              .then(setQr)
-              .catch(() => {
-                // se até aqui falhar, a página ainda mostra o copia-e-cola para colar no app
-              });
-          });
-        } else {
-          setError(
-            'Não foi possível gerar o código Pix. Verifique as variáveis do Pix.'
-          );
-        }
+    // Gera QR correspondente
+    toQRDataURL(copiaECola)
+      .then(setQr)
+      .catch((err) => {
+        console.error('Erro ao gerar QR:', err);
+        setQr('');
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item?.id]); // quando muda o item
+  }, [chavePix, cidade, favorecido, item, item.id]);
 
   async function handleCopy() {
     try {
