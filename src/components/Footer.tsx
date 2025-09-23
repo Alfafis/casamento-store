@@ -1,7 +1,7 @@
 export const Footer = () => {
   return (
-    <footer className="w-full bg-cream">
-      <div className="container-narrow text-center text-sm text-sage">
+    <footer className="absolute bottom-1 w-full bg-cream">
+      <div className="container-narrow text-center text-xs text-sage">
         <p>
           Site feito com muito amor ❤ - Desenvolvido por{' '}
           <a

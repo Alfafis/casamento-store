@@ -1,32 +1,30 @@
-import { Button } from '@/components/Button';
-import { Container } from '@/components/Container';
-import { Countdown } from '@/components/Countdown';
-import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/Button'
+import { Container } from '@/components/Container'
+import { Countdown } from '@/components/Countdown'
+import { useNavigate } from 'react-router-dom'
 
 const HomePage = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const listButtons = [
     { text: 'Confirmar Presença', path: '/confirmar-presenca' },
     { text: 'Sobre o Evento', path: '/sobre-o-evento' },
-    { text: 'Lista de Presentes', path: '/lista-de-presentes' },
-  ];
+    { text: 'Lista de Presentes', path: '/lista-de-presentes' }
+  ]
 
   return (
     <Container>
-      <section className="flex h-full flex-col items-center justify-start gap-4">
-        <div className="mt-16 flex flex-col gap-2 text-center">
-          <h1 className="font-pinyon text-7xl text-sage md:text-[92px] lg:text-[124px]">
+      <section className="mb-10 flex flex-col items-center justify-start gap-4 lg:mb-0">
+        <div className="mt-16 flex flex-col gap-2 text-center lg:mb-6">
+          <h1 className="font-pinyon text-7xl text-sage md:text-7xl lg:text-8xl">
             Rafael
           </h1>
-          <div className="font-amsterdam text-7xl text-gold md:text-[92px]">
-            &
-          </div>
-          <h1 className="font-pinyon text-7xl text-sage md:text-[92px] lg:text-[124px]">
+          <div className="font-amsterdam text-7xl text-gold md:text-7xl">&</div>
+          <h1 className="font-pinyon text-7xl text-sage md:text-7xl lg:text-8xl">
             Isabella
           </h1>
         </div>
-        <div className="flex flex-col items-center justify-center gap-12 text-center">
+        <div className="flex flex-col items-center justify-center gap-12 text-center lg:gap-8">
           <p className="text-center text-base font-medium uppercase tracking-[1.2px] text-gray-800 lg:text-2xl">
             convidam para uma celebração após o casamento civil
           </p>
@@ -60,7 +58,7 @@ const HomePage = () => {
         </div>
       </section>
     </Container>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage
