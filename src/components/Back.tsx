@@ -1,5 +1,5 @@
 interface BackProps {
-  onClick: () => void;
+  onClick: () => void
 }
 
 export const Back: React.FC<BackProps> = ({ onClick }) => {
@@ -10,5 +10,5 @@ export const Back: React.FC<BackProps> = ({ onClick }) => {
     >
       {'← Voltar'}
     </button>
-  );
-};
+  )
+}

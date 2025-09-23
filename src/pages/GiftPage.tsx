@@ -1,80 +1,78 @@
-import { Back } from '@/components/Back';
-import { Container } from '@/components/Container';
-import { GiftCard } from '@/components/GiftCard';
-import { Loading } from '@/components/Loading';
-import { getGifts } from '@/services/sheet';
-import { Gift } from '@/services/types';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Back } from '@/components/Back'
+import { Container } from '@/components/Container'
+import { GiftCard } from '@/components/GiftCard'
+import { Loading } from '@/components/Loading'
+import { getGifts } from '@/services/sheet'
+import { Gift } from '@/services/types'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const GiftPage = () => {
-  const navigate = useNavigate();
-  const [items, setItems] = useState<Gift[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
+  const navigate = useNavigate()
+  const [items, setItems] = useState<Gift[]>([])
+  const [loading, setLoading] = useState(true)
+  const [updating, setUpdating] = useState(false)
 
   useEffect(() => {
     const loadGifts = async () => {
-      const cached = localStorage.getItem('giftList');
-      let cachedList: Gift[] = [];
+      const cached = localStorage.getItem('giftList')
+      let cachedList: Gift[] = []
 
       // Se existe cache, exibe imediatamente
       if (cached) {
         try {
-          cachedList = JSON.parse(cached);
-          setItems(cachedList);
-          setLoading(false);
+          cachedList = JSON.parse(cached)
+          setItems(cachedList)
+          setLoading(false)
         } catch (err) {
-          console.error('Erro ao parsear cache:', err);
-          localStorage.removeItem('giftList'); // Remove cache inválido
+          console.error('Erro ao parsear cache:', err)
+          localStorage.removeItem('giftList') // Remove cache inválido
         }
       }
 
       // Busca dados atualizados em background
       try {
-        setUpdating(true);
-        const rawList = await getGifts();
+        setUpdating(true)
+        const rawList = await getGifts()
         const freshList: Gift[] = rawList.map((item: any) => ({
           id: item.id,
           titulo: item.titulo,
           valor: item.valor,
           imagem: item.imagem,
-          ativo: item.ativo,
-        }));
+          ativo: item.ativo
+        }))
 
         // Atualiza apenas se houver diferença
         const hasChanged =
-          JSON.stringify(freshList) !== JSON.stringify(cachedList);
+          JSON.stringify(freshList) !== JSON.stringify(cachedList)
         if (hasChanged) {
-          setItems(freshList);
-          localStorage.setItem('giftList', JSON.stringify(freshList));
+          setItems(freshList)
+          localStorage.setItem('giftList', JSON.stringify(freshList))
         }
       } catch (err) {
-        console.error('Erro ao buscar presentes:', err);
+        console.error('Erro ao buscar presentes:', err)
         // Se não tinha cache e falhou, mostra erro
         if (!cached) {
-          setItems([]);
+          setItems([])
         }
       } finally {
-        setUpdating(false);
-        setLoading(false);
+        setUpdating(false)
+        setLoading(false)
       }
-    };
+    }
 
-    loadGifts();
-  }, []);
+    loadGifts()
+  }, [])
 
   return (
     <Container>
-      <Back onClick={() => navigate(-1)} />
+      <Back onClick={() => navigate('/')} />
       <section className="flex flex-col gap-4">
-        <div className="mt-16 flex items-center justify-between">
-          <h3 className="mb-2 text-center text-xl font-semibold text-sage">
+        <div className="mt-16 flex items-center gap-4 lg:mt-8">
+          <h3 className="mb-2 mt-16 text-center text-xl font-semibold text-sage lg:mb-8 lg:mt-8 lg:text-4xl">
             Lista de Presentes
           </h3>
-          {updating && (
-            <span className="text-sm text-gray-500">Atualizando...</span>
-          )}
+          {updating && <Loading size={32} />}
         </div>
         {loading && <Loading />}
         {!loading && items.length === 0 && (
@@ -94,7 +92,7 @@ const GiftPage = () => {
         </div>
       </section>
     </Container>
-  );
-};
+  )
+}
 
-export default GiftPage;
+export default GiftPage

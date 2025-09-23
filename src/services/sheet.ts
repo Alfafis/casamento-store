@@ -64,12 +64,13 @@ export async function sendRSVP(payload: {
 }
 
 export async function sendGift(payload: {
-  nome?: string
-  email?: string
+  nome: string
+  email: string
   valor: number
-  itemId: string
   itemTitulo: string
+  itemId: string
   mensagem?: string
+  timestamp: string
 }) {
   const r = await fetch(ENDPOINT, {
     method: 'POST',

@@ -1,91 +1,109 @@
-import { Back } from '@/components/Back';
-import { Container } from '@/components/Container';
-import { gerarPixCopiaEColaEstatico } from '@/services/pix-brcode';
-import { sendGift } from '@/services/sheet';
-import { copyToClipboard, toQRDataURL } from '@/services/util';
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from '../components/Button';
-import { Input } from '../components/Input';
+import { Back } from '@/components/Back'
+import { Container } from '@/components/Container'
+import { gerarPixCopiaEColaEstatico } from '@/services/pix-brcode'
+import { sendGift } from '@/services/sheet'
+import { copyToClipboard, toQRDataURL } from '@/services/util'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Button } from '../components/Button'
+import { Input } from '../components/Input'
 
-type GiftItem = { id: string; titulo: string; valor: number; imagem?: string };
+type GiftItem = { id: string; titulo: string; valor: number; imagem?: string }
 
 export const PaymentPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
 
   // carrega o item salvo (ex.: vindo da lista)
   const item = useMemo<GiftItem | null>(() => {
-    const giftList = localStorage.getItem('giftList');
-    if (!giftList) return null;
+    const giftList = localStorage.getItem('giftList')
+    if (!giftList) return null
     try {
-      const list: GiftItem[] = JSON.parse(giftList);
-      return list.find((i) => i.id === id) || null;
+      const list: GiftItem[] = JSON.parse(giftList)
+      return list.find((i) => i.id === id) || null
     } catch {
-      return null;
+      return null
     }
-  }, [id]);
+  }, [id])
 
   // variáveis de ambiente (para gerar payload EMV Pix)
-  const chavePix = (import.meta.env.VITE_PIX_KEY as string) || ''; // sua chave Pix no Nubank
+  const chavePix = (import.meta.env.VITE_PIX_KEY as string) || '' // sua chave Pix no Nubank
   const favorecido =
-    (import.meta.env.VITE_PIX_FAVORECIDO as string) || 'Favorecido';
-  const cidade = (import.meta.env.VITE_PIX_CIDADE as string) || 'SAO PAULO';
+    (import.meta.env.VITE_PIX_FAVORECIDO as string) || 'Favorecido'
+  const cidade = (import.meta.env.VITE_PIX_CIDADE as string) || 'SAO PAULO'
 
   // fallback opcional: template "copia e cola" vindo do .env (com {{VALOR}})
   const copiaColaTemplate =
-    (import.meta.env.VITE_PIX_COPIA_E_COLA as string) || '';
+    (import.meta.env.VITE_PIX_COPIA_E_COLA as string) || ''
 
   // estados de UI
-  const [qr, setQr] = useState(''); // dataURL do QR
-  const [payload, setPayload] = useState(''); // copia-e-cola (EMV Pix)
-  const [copied, setCopied] = useState(false); // feedback de cópia
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [mensagem, setMensagem] = useState('');
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [qr, setQr] = useState('') // dataURL do QR
+  const [payload, setPayload] = useState('') // copia-e-cola (EMV Pix)
+  const [copied, setCopied] = useState(false) // feedback de cópia
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  const [mensagem, setMensagem] = useState('')
+  const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [formSubmitted, setFormSubmitted] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(0) // segundos restantes
 
+  // Timer de 5 minutos (300 segundos)
   useEffect(() => {
-    if (!item) return;
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [timeLeft])
 
-    // Gera payload ESTÁTICO (PIM=11, TXID=***), com valor do presente
-    const copiaECola = gerarPixCopiaEColaEstatico({
-      chave: chavePix,
-      nome: favorecido,
-      cidade,
-      valor: item.valor,
-    });
-    setPayload(copiaECola);
+  async function handleGeneratePix() {
+    if (!item) return
+    if (!nome.trim() || !email.trim()) {
+      setError('Nome e e-mail são obrigatórios.')
+      return
+    }
+    setLoading(true)
+    setError('')
+    try {
+      // Gera payload com mensagem incluída
+      const copiaECola = gerarPixCopiaEColaEstatico({
+        chave: chavePix,
+        nome: favorecido,
+        cidade,
+        valor: item.valor,
+        descricao: mensagem.trim() || `Presente: ${item.titulo}`
+      })
+      setPayload(copiaECola)
 
-    // Gera QR correspondente
-    toQRDataURL(copiaECola)
-      .then(setQr)
-      .catch((err) => {
-        console.error('Erro ao gerar QR:', err);
-        setQr('');
-      });
-  }, [chavePix, cidade, favorecido, item, item.id]);
+      // Gera QR correspondente
+      const qrData = await toQRDataURL(copiaECola)
+      setQr(qrData)
+
+      setFormSubmitted(true)
+      setTimeLeft(300) // 5 minutos
+    } catch (err) {
+      console.error('Erro ao gerar PIX:', err)
+      setError('Erro ao gerar código PIX. Tente novamente.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function handleCopy() {
     try {
-      await copyToClipboard(payload);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
+      await copyToClipboard(payload)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
     } catch (err) {
-      console.error('Erro ao copiar:', err);
+      console.error('Erro ao copiar:', err)
     }
   }
 
   async function handleConfirm() {
-    if (!item) return;
-    if (!nome.trim() || !email.trim()) {
-      setError('Nome e e-mail são obrigatórios.');
-      return;
-    }
-    setLoading(true);
-    setError('');
+    if (!item) return
+    setLoading(true)
+    setError('')
     try {
       await sendGift({
         itemId: item.id,
@@ -93,13 +111,13 @@ export const PaymentPage: React.FC = () => {
         valor: item.valor,
         nome: nome.trim(),
         email: email.trim(),
-        mensagem: mensagem.trim(),
-      });
-      setSent(true);
+        mensagem: mensagem.trim()
+      })
+      setSent(true)
     } catch (err) {
-      setError('Erro ao registrar o presente. Tente novamente.');
+      setError('Erro ao registrar o presente. Tente novamente.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -114,7 +132,7 @@ export const PaymentPage: React.FC = () => {
           </p>
         </div>
       </Container>
-    );
+    )
   }
 
   return (
@@ -128,72 +146,126 @@ export const PaymentPage: React.FC = () => {
           R$ {item.valor.toFixed(2)}
         </p>
 
-        {qr && (
-          <img
-            src={qr}
-            alt="QR Code PIX"
-            className="h-48 w-48 rounded-lg border border-sage/20 shadow-sm"
-          />
+        {!formSubmitted ? (
+          // Formulário para coletar dados
+          <>
+            <p className="px-4 text-center text-sm text-sage">
+              Preencha seus dados para gerar o código PIX personalizado.
+            </p>
+            <div className="w-full space-y-4">
+              <Input
+                placeholder="Seu nome *"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+              />
+              <Input
+                placeholder="Seu e-mail *"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                required
+              />
+              <Input
+                placeholder="Mensagem personalizada (opcional)"
+                value={mensagem}
+                onChange={(e) => setMensagem(e.target.value)}
+              />
+
+              {error && (
+                <p className="text-center text-sm text-red-500">{error}</p>
+              )}
+
+              <Button
+                text={loading ? 'Gerando PIX...' : 'Gerar Código PIX'}
+                onClick={handleGeneratePix}
+                disabled={loading}
+                className="w-full"
+              />
+            </div>
+          </>
+        ) : (
+          // Seção PIX com timer
+          <>
+            {timeLeft > 0 ? (
+              <>
+                <div className="text-center">
+                  <p className="text-sm text-sage">
+                    Código válido por:{' '}
+                    <span className="font-semibold text-gold">
+                      {Math.floor(timeLeft / 60)}:
+                      {(timeLeft % 60).toString().padStart(2, '0')}
+                    </span>
+                  </p>
+                </div>
+
+                {qr && (
+                  <img
+                    src={qr}
+                    alt="QR Code PIX"
+                    className="h-48 w-48 rounded-lg border border-sage/20 shadow-sm"
+                  />
+                )}
+
+                {/* Copia e Cola */}
+                <div className="w-full rounded-xl border border-sage/20 bg-cream p-4">
+                  <p className="text-sageDark mb-2 text-center text-sm font-medium">
+                    Código PIX (Copia e Cola):
+                  </p>
+                  <div className="text-sageDark max-h-40 select-all overflow-y-auto break-all text-center text-xs">
+                    {payload}
+                  </div>
+                </div>
+
+                <Button
+                  text={copied ? 'Copiado! ✅' : 'Copiar código PIX'}
+                  onClick={handleCopy}
+                  disabled={!payload}
+                  className="w-full"
+                />
+
+                <p className="px-4 text-center text-sm text-sage">
+                  Copie o código acima ou aponte a câmera para o QR Code no app
+                  do seu banco.
+                </p>
+
+                <Button
+                  text={
+                    sent
+                      ? 'Registrado! Obrigado ❤️'
+                      : loading
+                        ? 'Registrando...'
+                        : 'Confirmar Pagamento'
+                  }
+                  onClick={handleConfirm}
+                  disabled={sent || loading}
+                  className="w-full"
+                />
+              </>
+            ) : (
+              // Timer expirado
+              <div className="text-center">
+                <p className="mb-4 text-lg text-red-500">
+                  ⏰ Código PIX expirado!
+                </p>
+                <p className="mb-6 text-sm text-sage">
+                  Gere um novo código para continuar.
+                </p>
+                <Button
+                  text="Gerar Novo Código"
+                  onClick={() => {
+                    setFormSubmitted(false)
+                    setQr('')
+                    setPayload('')
+                    setTimeLeft(0)
+                  }}
+                  className="w-full"
+                />
+              </div>
+            )}
+          </>
         )}
-
-        {/* Copia e Cola */}
-        <div className="w-full rounded-xl border border-sage/20 bg-cream p-4">
-          <p className="text-sageDark mb-2 text-center text-sm font-medium">
-            Código PIX (Copia e Cola):
-          </p>
-          <div className="text-sageDark max-h-40 select-all overflow-y-auto break-all text-center text-xs">
-            {payload || 'Gerando código Pix...'}
-          </div>
-        </div>
-
-        <Button
-          text={copied ? 'Copiado! ✅' : 'Copiar código PIX'}
-          onClick={handleCopy}
-          disabled={!payload}
-          className="w-full"
-        />
-
-        <p className="px-4 text-center text-sm text-sage">
-          Copie o código acima ou aponte a câmera para o QR Code no app do seu
-          banco.
-        </p>
-
-        <div className="w-full space-y-4">
-          <Input
-            placeholder="Seu nome *"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            required
-          />
-          <Input
-            placeholder="Seu e-mail *"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            required
-          />
-          <Input
-            placeholder="Mensagem (opcional)"
-            value={mensagem}
-            onChange={(e) => setMensagem(e.target.value)}
-          />
-
-          {error && <p className="text-center text-sm text-red-500">{error}</p>}
-
-          <Button
-            text={
-              sent
-                ? 'Registrado! Obrigado ❤️'
-                : loading
-                  ? 'Registrando...'
-                  : 'Registrar presente'
-            }
-            onClick={handleConfirm}
-            disabled={sent || loading}
-            className="w-full"
-          />
-        </div>
       </div>
     </Container>
-  );
-};
+  )
+}
