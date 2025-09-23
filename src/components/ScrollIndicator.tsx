@@ -46,8 +46,10 @@ export const ScrollIndicator: React.FC = () => {
   return (
     <div className="fixed bottom-2 right-2 z-50">
       <button
-        className={`flex size-12 items-center justify-center rounded-full border-2 border-sage/30 bg-gold transition-all duration-300 hover:scale-110 ${
-          isFlipping ? 'animate-spin' : ''
+        className={`flex size-12 items-center justify-center rounded-full border-2 border-sage/30 bg-gold transition-all hover:scale-110 ${
+          isFlipping
+            ? 'animate-spin duration-300'
+            : 'duration-\[3500s\] animate-bounce'
         }`}
         onClick={handleClick}
         aria-label={isAtBottom ? 'Scroll to top' : 'Scroll to bottom'}
