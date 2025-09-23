@@ -1,6 +1,6 @@
 export const Footer = () => {
   return (
-    <footer className="fixed bottom-2 flex w-full items-center justify-center bg-cream/90 p-2 backdrop-blur-sm">
+    <footer className="border-1 fixed bottom-0 flex w-full items-center justify-center border-t border-sage bg-cream/90 p-2 backdrop-blur-sm">
       <div className="container-narrow text-center text-xs text-sage">
         <p>
           Site feito com muito amor ❤ - Desenvolvido por{' '}
