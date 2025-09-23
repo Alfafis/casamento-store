@@ -66,8 +66,8 @@ const GiftPage = () => {
 
   return (
     <Container>
-      <Back onClick={() => navigate('/')} />
-      <section className="mt-16 flex flex-col gap-4 lg:mt-8">
+      <section className="flex flex-col gap-4">
+        <Back onClick={() => navigate('/')} />
         <div className="flex items-center gap-4">
           <h3 className="mb-2 text-center text-xl font-semibold text-sage lg:mb-8 lg:mt-8 lg:text-4xl">
             Lista de Presentes

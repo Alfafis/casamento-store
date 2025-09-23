@@ -130,7 +130,7 @@ export const PaymentPage: React.FC = () => {
     return (
       <Container>
         <Back onClick={() => navigate(-1)} />
-        <div className="mt-16 py-8 text-center">
+        <div className="py-8 text-center">
           <p className="text-sageDark text-lg">Presente não encontrado.</p>
           <p className="mt-2 text-sm text-sage">
             Volte para a lista de presentes.
@@ -143,18 +143,35 @@ export const PaymentPage: React.FC = () => {
   return (
     <Container>
       <Back onClick={() => navigate(-1)} />
-      <div className="mx-auto mt-16 flex max-w-md flex-col items-center gap-4">
-        <h3 className="mb-2 text-center text-xl text-sage">
-          <strong>Presentear:</strong> {item.titulo}
-        </h3>
-        <p className="text-center text-2xl font-semibold text-gold">
-          R$ {item.valor.toFixed(2)}
-        </p>
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex w-full flex-col items-center gap-2">
+          <h3 className="text-sageDark text-center text-3xl font-bold">
+            Presentear
+          </h3>
+          <p className="text-sageDark text-center text-xl font-medium">
+            {item.titulo}
+          </p>
+          {!formSubmitted && item.imagem && (
+            <img
+              src={item.imagem}
+              alt={item.titulo}
+              className="mb-2 h-44 w-44 rounded-xl border border-sage/10 object-cover shadow-md"
+            />
+          )}
+          <div className="mt-1 flex items-center justify-center gap-2">
+            <span className="text-2xl font-bold text-gold">
+              R$ {item.valor.toFixed(2)}
+            </span>
+          </div>
+          <span className="rounded bg-gold/10 px-2 py-1 text-xs font-semibold text-gold">
+            Valor do presente
+          </span>
+        </div>
 
         {!formSubmitted ? (
           // Formulário para coletar dados
-          <>
-            <p className="px-4 text-center text-sm text-sage">
+          <aside className="flex w-7/12 flex-col gap-8 bg-cream">
+            <p className="px-4 text-center text-lg font-semibold text-sage">
               Preencha seus dados para gerar o código PIX personalizado.
             </p>
             <div className="w-full space-y-4">
@@ -188,16 +205,16 @@ export const PaymentPage: React.FC = () => {
                 className="w-full"
               />
             </div>
-          </>
+          </aside>
         ) : (
           // Seção PIX com timer
-          <>
+          <article className="flex w-7/12 flex-col items-center gap-8 bg-cream p-6">
             {timeLeft > 0 ? (
               <>
                 <div className="text-center">
-                  <p className="text-sm text-sage">
+                  <p className="text-2xl text-red-500">
                     Código válido por:{' '}
-                    <span className="font-semibold text-gold">
+                    <span className="font-semibold text-red-500">
                       {Math.floor(timeLeft / 60)}:
                       {(timeLeft % 60).toString().padStart(2, '0')}
                     </span>
@@ -268,7 +285,7 @@ export const PaymentPage: React.FC = () => {
                 />
               </div>
             )}
-          </>
+          </article>
         )}
       </div>
     </Container>

@@ -14,7 +14,7 @@ const HomePage = () => {
 
   return (
     <Container>
-      <div className="flex flex-col gap-2 text-center lg:mb-6">
+      <div className="mt-8 flex flex-col gap-2 text-center lg:mb-6">
         <h1 className="font-pinyon text-7xl text-sage md:text-7xl lg:text-8xl">
           Rafael
         </h1>

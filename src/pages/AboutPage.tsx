@@ -9,8 +9,8 @@ const AboutPage = () => {
 
   return (
     <Container>
-      <Back onClick={() => navigate('/')} />
-      <h3 className="mb-2 mt-16 text-center text-xl font-semibold text-sage lg:mb-8 lg:mt-8 lg:text-4xl">
+      <h3 className="flex flex-col gap-4 text-center text-xl font-semibold text-sage lg:mb-8 lg:mt-8 lg:text-4xl">
+        <Back onClick={() => navigate('/')} />
         Evento & Local
       </h3>
       <div>
