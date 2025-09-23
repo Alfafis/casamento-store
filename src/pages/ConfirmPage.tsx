@@ -12,11 +12,17 @@ import { z } from 'zod'
 const schema = z.object({
   nome: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   email: z.string().email('E-mail inválido'),
-  celular: z.string().min(10, 'Celular deve ter pelo menos 10 dígitos'),
-  qtdeConvidados: z.coerce
-    .number()
-    .min(0, 'Mínimo 0')
-    .max(10, 'Máximo 10 acompanhantes'),
+  telefone: z
+    .string()
+    .min(14, 'Telefone deve ter pelo menos 14 caracteres')
+    .regex(/^\(\d{2}\) \d{5}-\d{4}$/, 'Formato: (11) 91234-5678'),
+  qtdeConvidados: z.preprocess(
+    (val) => {
+      const n = Number(val)
+      return isNaN(n) ? 0 : n
+    },
+    z.number().min(0, 'Mínimo 0').max(10, 'Máximo 10 acompanhantes')
+  ),
   convidados: z.string().optional(),
   observacoes: z.string().max(200, 'Máximo 200 caracteres').optional()
 })
@@ -32,8 +38,24 @@ const ConfirmPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
-  } = useForm<FormData>({ resolver: zodResolver(schema) })
+    reset,
+    watch
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: 'onBlur' // Valida ao sair do campo
+  })
+
+  // Máscara simples para telefone
+  const formatPhone = (value: string) => {
+    const cleaned = value.replace(/\D/g, '')
+    const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/)
+    if (match) {
+      return `(${match[1]}) ${match[2]}-${match[3]}`
+    }
+    return value
+  }
+
+  const telefoneValue = watch('telefone')
 
   async function onSubmit(data: FormData) {
     setLoading(true)
@@ -45,7 +67,7 @@ const ConfirmPage = () => {
       await sendRSVP({
         nome: data.nome,
         email: data.email,
-        celular: data.celular,
+        celular: data.telefone,
         qtdeConvidados: data.qtdeConvidados,
         convidados,
         observacoes: data.observacoes
@@ -114,14 +136,19 @@ const ConfirmPage = () => {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="celular" className="font-medium">
-            Celular *
+          <label htmlFor="telefone" className="font-medium">
+            Telefone *
           </label>
           <Input
-            id="celular"
+            id="telefone"
             placeholder="ex: (11) 91234-5678"
-            error={errors.celular?.message}
-            {...register('celular')}
+            error={errors.telefone?.message}
+            {...register('telefone', {
+              onChange: (e) => {
+                const formatted = formatPhone(e.target.value)
+                e.target.value = formatted
+              }
+            })}
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -135,10 +162,7 @@ const ConfirmPage = () => {
             max={10}
             placeholder="ex: 2"
             error={errors.qtdeConvidados?.message}
-            {...register('qtdeConvidados', {
-              valueAsNumber: true,
-              setValueAs: (v) => (v === '' ? 0 : Number(v))
-            })}
+            {...register('qtdeConvidados')}
           />
         </div>
         <div className="flex flex-col gap-1 md:col-span-2">
