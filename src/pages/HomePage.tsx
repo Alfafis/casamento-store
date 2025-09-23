@@ -1,5 +1,6 @@
 import { Button } from '@/components/Button';
 import { Container } from '@/components/Container';
+import { Countdown } from '@/components/Countdown';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
@@ -43,6 +44,8 @@ const HomePage = () => {
       <p className="text-center text-sm lg:text-2xl font-medium text-gray-800">
         Às 17h00, no Restaurante Rancho do Boi
       </p>
+
+      <Countdown />
       <div className="flex flex-col sm:flex-row justify-center gap-4 items-center text-center mt-12 mb-32 lg:mb-0 lg:mt-0 lg:absolute lg:bottom-24 lg:left-1/2 lg:-translate-x-1/2 w-full lg:px-24">
         {listButtons.map((button, index) => (
           <Button
