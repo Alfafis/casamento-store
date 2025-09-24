@@ -48,6 +48,13 @@ const GiftPage = () => {
         if (hasChanged) {
           setItems(freshList)
           localStorage.setItem('giftList', JSON.stringify(freshList))
+
+          // Cria mapeamento de IDs falsos para IDs reais
+          const idMapping: Record<string, string> = {}
+          freshList.forEach((item, index) => {
+            idMapping[index.toString()] = item.id
+          })
+          localStorage.setItem('giftIdMapping', JSON.stringify(idMapping))
         }
       } catch (err) {
         console.error('Erro ao buscar presentes:', err)

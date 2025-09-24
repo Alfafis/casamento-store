@@ -10,6 +10,27 @@ import { Input } from '../components/Input'
 
 type GiftItem = { id: string; titulo: string; valor: number; imagem?: string }
 
+// Função para formatar valor como moeda brasileira em tempo real
+const formatCurrencyRealTime = (value: string): string => {
+  // Remove tudo exceto números
+  const numericValue = value.replace(/\D/g, '')
+
+  // Se vazio, retorna vazio
+  if (!numericValue) return ''
+
+  // Converte para número (centavos)
+  const cents = parseInt(numericValue, 10)
+
+  // Formata como reais
+  const reais = (cents / 100).toFixed(2)
+
+  // Aplica formatação brasileira
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(parseFloat(reais))
+}
+
 export const PaymentPage: React.FC = () => {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
@@ -25,6 +46,17 @@ export const PaymentPage: React.FC = () => {
       return null
     }
   }, [id])
+
+  // Inicializa o valor customizado quando o item muda
+  useEffect(() => {
+    if (item && item.id === '0') {
+      const initialValue = item.valor > 0 ? item.valor : 0
+      setCustomValor(initialValue)
+      setCustomValorFormatted(
+        initialValue > 0 ? formatCurrency(initialValue) : ''
+      )
+    }
+  }, [item])
 
   // variáveis de ambiente (para gerar payload EMV Pix)
   const chavePix = (import.meta.env.VITE_PIX_KEY as string) || '' // sua chave Pix no Nubank
@@ -48,6 +80,23 @@ export const PaymentPage: React.FC = () => {
   const [error, setError] = useState('')
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [timeLeft, setTimeLeft] = useState(0) // segundos restantes
+  const [customValor, setCustomValor] = useState<number>(0) // valor customizado para PIX
+  const [customValorFormatted, setCustomValorFormatted] = useState<string>('') // valor formatado como string
+
+  // Função para formatar valor como moeda brasileira
+  const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value)
+  }
+
+  // Função para parsear valor formatado de volta para number
+  const parseCurrency = (value: string): number => {
+    // Remove R$, espaços e converte vírgula para ponto
+    const cleanValue = value.replace(/[^\d,]/g, '').replace(',', '.')
+    return parseFloat(cleanValue) || 0
+  }
 
   // Timer de 5 minutos (300 segundos)
   useEffect(() => {
@@ -63,6 +112,14 @@ export const PaymentPage: React.FC = () => {
       setError('Nome e e-mail são obrigatórios.')
       return
     }
+
+    // Valida valor para item personalizado
+    const valorParaPix = item.id === '0' ? customValor : item.valor
+    if (valorParaPix <= 0) {
+      setError('Valor deve ser maior que zero.')
+      return
+    }
+
     setLoading(true)
     setError('')
     try {
@@ -71,7 +128,7 @@ export const PaymentPage: React.FC = () => {
         chave: chavePix,
         nome: favorecido,
         cidade,
-        valor: item.valor,
+        valor: valorParaPix,
         descricao: mensagem.trim() || `Presente: ${item.titulo}`
       })
       setPayload(copiaECola)
@@ -105,13 +162,14 @@ export const PaymentPage: React.FC = () => {
     setLoading(true)
     setError('')
     try {
+      const valorParaRegistro = item.id === '0' ? customValor : item.valor
       const now = new Date()
       const pad = (n: number) => n.toString().padStart(2, '0')
       const formattedTimestamp = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
       await sendGift({
         itemId: item.id,
         itemTitulo: item.titulo,
-        valor: item.valor,
+        valor: valorParaRegistro,
         nome: nome.trim(),
         email: email.trim(),
         mensagem: mensagem.trim(),
@@ -156,13 +214,41 @@ export const PaymentPage: React.FC = () => {
           />
         )}
         <div className="mt-1 flex items-center justify-center gap-2">
-          <span className="text-2xl font-bold text-gold">
-            R$ {item.valor.toFixed(2)}
-          </span>
+          {item.id === '0' ? (
+            <Input
+              type="text"
+              placeholder="Digite o valor"
+              value={customValorFormatted}
+              onChange={(e) => {
+                if (formSubmitted) return
+                const inputValue = e.target.value
+                const formattedValue = formatCurrencyRealTime(inputValue)
+                setCustomValorFormatted(formattedValue)
+                const numericValue = parseCurrency(formattedValue)
+                setCustomValor(numericValue)
+              }}
+              onBlur={() => {
+                if (!formSubmitted && customValor > 0) {
+                  setCustomValorFormatted(formatCurrency(customValor))
+                }
+              }}
+              disabled={formSubmitted}
+              className={`w-44 text-center text-xl font-bold text-gold ${formSubmitted ? 'cursor-not-allowed opacity-75' : ''}`}
+            />
+          ) : (
+            <span className="text-2xl font-bold text-gold">
+              R$ {item.valor.toFixed(2)}
+            </span>
+          )}
         </div>
         <span className="rounded bg-gold/10 px-2 py-1 text-xs font-semibold text-gold">
           Valor do presente
         </span>
+        {formSubmitted && item.id === '0' && (
+          <span className="text-xs italic text-sage/70">
+            Valor bloqueado após geração do PIX
+          </span>
+        )}
       </div>
 
       {!formSubmitted ? (
@@ -228,20 +314,43 @@ export const PaymentPage: React.FC = () => {
 
               {/* Copia e Cola */}
               <div className="w-full rounded-xl border border-sage/20 bg-cream p-4">
-                <p className="text-sageDark mb-2 text-center text-sm font-medium">
+                <p className="text-sageDark mb-2 text-center text-base font-medium">
                   Código PIX (Copia e Cola):
                 </p>
-                <div className="text-sageDark max-h-40 select-all overflow-y-auto break-all text-center text-xs">
+                <div className="text-sageDark mb-4 max-h-40 select-all overflow-y-auto break-all text-center text-xs">
                   {payload}
                 </div>
-              </div>
 
-              <Button
-                text={copied ? 'Copiado! ✅' : 'Copiar código PIX'}
-                onClick={handleCopy}
-                disabled={!payload}
-                className="w-full"
-              />
+                {/* Botões de cópia */}
+                <div className="flex flex-col gap-3">
+                  <Button
+                    text={copied ? 'Copiado! ✅' : 'Copiar código PIX'}
+                    onClick={handleCopy}
+                    disabled={!payload}
+                    className="w-full"
+                  />
+
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-sageDark text-base">
+                      Ou use a chave PIX:
+                    </span>
+                    <div className="flex w-full items-center gap-2">
+                      <span className="text-sageDark flex-1 select-all rounded bg-sage/10 px-2 py-1.5 text-center font-mono text-lg">
+                        {chavePix}
+                      </span>
+                      <Button
+                        text="Copiar chave"
+                        onClick={async () => {
+                          await copyToClipboard(chavePix)
+                          setCopied(true)
+                          setTimeout(() => setCopied(false), 1600)
+                        }}
+                        disabled={!chavePix}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <p className="px-4 text-center text-sm text-sage">
                 Copie o código acima ou aponte a câmera para o QR Code no app do
