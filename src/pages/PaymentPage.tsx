@@ -142,152 +142,148 @@ export const PaymentPage: React.FC = () => {
 
   return (
     <Container>
-      <Back onClick={() => navigate(-1)} />
-      <div className="flex flex-col items-center gap-4">
-        <div className="flex w-full flex-col items-center gap-2">
-          <h3 className="text-sageDark text-center text-3xl font-bold">
-            Presentear
-          </h3>
-          <p className="text-sageDark text-center text-xl font-medium">
-            {item.titulo}
-          </p>
-          {!formSubmitted && item.imagem && (
-            <img
-              src={item.imagem}
-              alt={item.titulo}
-              className="mb-2 h-44 w-44 rounded-xl border border-sage/10 object-cover shadow-md"
-            />
-          )}
-          <div className="mt-1 flex items-center justify-center gap-2">
-            <span className="text-2xl font-bold text-gold">
-              R$ {item.valor.toFixed(2)}
-            </span>
-          </div>
-          <span className="rounded bg-gold/10 px-2 py-1 text-xs font-semibold text-gold">
-            Valor do presente
+      <div className="flex w-full flex-col items-center gap-4">
+        <Back onClick={() => navigate(-1)} />
+        <h3 className="text-center text-3xl font-bold text-sage">Presentear</h3>
+        <p className="text-sageDark text-center text-xl font-medium">
+          {item.titulo}
+        </p>
+        {!formSubmitted && item.imagem && (
+          <img
+            src={item.imagem}
+            alt={item.titulo}
+            className="mb-2 h-44 w-44 rounded-xl border border-sage/10 object-contain shadow-md"
+          />
+        )}
+        <div className="mt-1 flex items-center justify-center gap-2">
+          <span className="text-2xl font-bold text-gold">
+            R$ {item.valor.toFixed(2)}
           </span>
         </div>
+        <span className="rounded bg-gold/10 px-2 py-1 text-xs font-semibold text-gold">
+          Valor do presente
+        </span>
+      </div>
 
-        {!formSubmitted ? (
-          // Formulário para coletar dados
-          <aside className="flex w-7/12 flex-col gap-8 bg-cream">
-            <p className="px-4 text-center text-lg font-semibold text-sage">
-              Preencha seus dados para gerar o código PIX personalizado.
-            </p>
-            <div className="w-full space-y-4">
-              <Input
-                placeholder="Seu nome *"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                required
-              />
-              <Input
-                placeholder="Seu e-mail *"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                required
-              />
-              <Input
-                placeholder="Mensagem personalizada (opcional)"
-                value={mensagem}
-                onChange={(e) => setMensagem(e.target.value)}
-              />
+      {!formSubmitted ? (
+        // Formulário para coletar dados
+        <aside className="flex w-full flex-col gap-8 bg-cream lg:mx-auto lg:w-7/12">
+          <p className="px-4 text-center text-lg font-semibold text-sage">
+            Preencha seus dados para gerar o código PIX personalizado.
+          </p>
+          <div className="w-full space-y-4">
+            <Input
+              placeholder="Seu nome *"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              required
+            />
+            <Input
+              placeholder="Seu e-mail *"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              required
+            />
+            <Input
+              placeholder="Mensagem personalizada (opcional)"
+              value={mensagem}
+              onChange={(e) => setMensagem(e.target.value)}
+            />
 
-              {error && (
-                <p className="text-center text-sm text-red-500">{error}</p>
+            {error && (
+              <p className="text-center text-sm text-red-500">{error}</p>
+            )}
+
+            <Button
+              text={loading ? 'Gerando PIX...' : 'Gerar Código PIX'}
+              onClick={handleGeneratePix}
+              disabled={loading}
+              className="w-full"
+            />
+          </div>
+        </aside>
+      ) : (
+        // Seção PIX com timer
+        <article className="flex w-full flex-col items-center gap-8 bg-cream p-6 lg:mx-auto lg:w-7/12">
+          {timeLeft > 0 ? (
+            <>
+              <div className="text-center">
+                <p className="text-2xl text-red-500">
+                  Código válido por:{' '}
+                  <span className="font-semibold text-red-500">
+                    {Math.floor(timeLeft / 60)}:
+                    {(timeLeft % 60).toString().padStart(2, '0')}
+                  </span>
+                </p>
+              </div>
+
+              {qr && (
+                <img
+                  src={qr}
+                  alt="QR Code PIX"
+                  className="h-48 w-48 rounded-lg border border-sage/20 shadow-sm"
+                />
               )}
 
+              {/* Copia e Cola */}
+              <div className="w-full rounded-xl border border-sage/20 bg-cream p-4">
+                <p className="text-sageDark mb-2 text-center text-sm font-medium">
+                  Código PIX (Copia e Cola):
+                </p>
+                <div className="text-sageDark max-h-40 select-all overflow-y-auto break-all text-center text-xs">
+                  {payload}
+                </div>
+              </div>
+
               <Button
-                text={loading ? 'Gerando PIX...' : 'Gerar Código PIX'}
-                onClick={handleGeneratePix}
-                disabled={loading}
+                text={copied ? 'Copiado! ✅' : 'Copiar código PIX'}
+                onClick={handleCopy}
+                disabled={!payload}
+                className="w-full"
+              />
+
+              <p className="px-4 text-center text-sm text-sage">
+                Copie o código acima ou aponte a câmera para o QR Code no app do
+                seu banco.
+              </p>
+
+              <Button
+                text={
+                  sent
+                    ? 'Registrado! Obrigado ❤️'
+                    : loading
+                      ? 'Registrando...'
+                      : 'Confirmar Pagamento'
+                }
+                onClick={handleConfirm}
+                disabled={sent || loading}
+                className="w-full"
+              />
+            </>
+          ) : (
+            // Timer expirado
+            <div className="text-center">
+              <p className="mb-4 text-lg text-red-500">
+                ⏰ Código PIX expirado!
+              </p>
+              <p className="mb-6 text-sm text-sage">
+                Gere um novo código para continuar.
+              </p>
+              <Button
+                text="Gerar Novo Código"
+                onClick={() => {
+                  setFormSubmitted(false)
+                  setQr('')
+                  setPayload('')
+                  setTimeLeft(0)
+                }}
                 className="w-full"
               />
             </div>
-          </aside>
-        ) : (
-          // Seção PIX com timer
-          <article className="flex w-7/12 flex-col items-center gap-8 bg-cream p-6">
-            {timeLeft > 0 ? (
-              <>
-                <div className="text-center">
-                  <p className="text-2xl text-red-500">
-                    Código válido por:{' '}
-                    <span className="font-semibold text-red-500">
-                      {Math.floor(timeLeft / 60)}:
-                      {(timeLeft % 60).toString().padStart(2, '0')}
-                    </span>
-                  </p>
-                </div>
-
-                {qr && (
-                  <img
-                    src={qr}
-                    alt="QR Code PIX"
-                    className="h-48 w-48 rounded-lg border border-sage/20 shadow-sm"
-                  />
-                )}
-
-                {/* Copia e Cola */}
-                <div className="w-full rounded-xl border border-sage/20 bg-cream p-4">
-                  <p className="text-sageDark mb-2 text-center text-sm font-medium">
-                    Código PIX (Copia e Cola):
-                  </p>
-                  <div className="text-sageDark max-h-40 select-all overflow-y-auto break-all text-center text-xs">
-                    {payload}
-                  </div>
-                </div>
-
-                <Button
-                  text={copied ? 'Copiado! ✅' : 'Copiar código PIX'}
-                  onClick={handleCopy}
-                  disabled={!payload}
-                  className="w-full"
-                />
-
-                <p className="px-4 text-center text-sm text-sage">
-                  Copie o código acima ou aponte a câmera para o QR Code no app
-                  do seu banco.
-                </p>
-
-                <Button
-                  text={
-                    sent
-                      ? 'Registrado! Obrigado ❤️'
-                      : loading
-                        ? 'Registrando...'
-                        : 'Confirmar Pagamento'
-                  }
-                  onClick={handleConfirm}
-                  disabled={sent || loading}
-                  className="w-full"
-                />
-              </>
-            ) : (
-              // Timer expirado
-              <div className="text-center">
-                <p className="mb-4 text-lg text-red-500">
-                  ⏰ Código PIX expirado!
-                </p>
-                <p className="mb-6 text-sm text-sage">
-                  Gere um novo código para continuar.
-                </p>
-                <Button
-                  text="Gerar Novo Código"
-                  onClick={() => {
-                    setFormSubmitted(false)
-                    setQr('')
-                    setPayload('')
-                    setTimeLeft(0)
-                  }}
-                  className="w-full"
-                />
-              </div>
-            )}
-          </article>
-        )}
-      </div>
+          )}
+        </article>
+      )}
     </Container>
   )
 }
