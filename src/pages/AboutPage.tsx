@@ -21,7 +21,12 @@ const AboutPage = () => {
           </li>
           <li>Traje sugerido: esporte fino</li>
           <li>Estacionamento no local</li>
-          <li>Comandas individuais</li>
+          <li>
+            Comandas por mesas - então se acomode com seu grupo{' '}
+            <span role="img" aria-label="coração">
+              ❤️
+            </span>
+          </li>
         </ul>
       </div>
       <section className="flex flex-col items-start justify-between gap-12 md:flex-col lg:flex-row lg:justify-between">
