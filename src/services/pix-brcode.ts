@@ -53,22 +53,30 @@ export function gerarPixCopiaEColaEstatico({
   const pfi = tlv('00', '01') // Payload Format Indicator
   const pim = tlv('01', '11') // Point of Initiation Method: 11 = estático
 
-  const mcc = tlv('52', '0000') // Merchant Category Code (genérico)
+  const mcc = tlv('52', '8398') // Merchant Category Code (Organizações de Caridade)
   const cur = tlv('53', '986') // BRL
   const amt =
-    typeof valor === 'number'
+    typeof valor === 'number' && valor > 0
       ? tlv('54', valor.toFixed(2)) // sempre . (ponto) e 2 casas
       : ''
 
   const ctry = tlv('58', 'BR') // País
 
-  // Nome/Cidade sem acento e tamanhos seguros
-  const nm = tlv('59', removeAcentos(nome).slice(0, 25) || 'RECEBEDOR')
-  const ct = tlv('60', removeAcentos(cidade).slice(0, 15) || 'SAO PAULO')
+  // Nome/Cidade sem acento e tamanhos seguros (mínimo 2 chars para evitar rejeição)
+  const nomeLimpo = removeAcentos(nome).trim()
+  const cidadeLimpa = removeAcentos(cidade).trim()
 
-  // Additional Data Field Template (62) com TXID "***" (estático)
-  const tx = tlv('05', '***')
-  const adf = tlv('62', tx)
+  const nm = tlv(
+    '59',
+    nomeLimpo.length >= 2 ? nomeLimpo.slice(0, 25) : 'Presente Casamento'
+  )
+  const ct = tlv(
+    '60',
+    cidadeLimpa.length >= 2 ? cidadeLimpa.slice(0, 15) : 'Sao Paulo'
+  )
+
+  // Additional Data Field Template (62) com TXID vazio (mais compatível)
+  const adf = tlv('62', '')
 
   // Monta sem CRC (63) primeiro
   const semCRC =

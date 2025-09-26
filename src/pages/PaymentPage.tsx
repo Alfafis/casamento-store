@@ -1,5 +1,6 @@
 import { Back } from '@/components/Back'
 import { Container } from '@/components/Container'
+import Toast from '@/components/Toast'
 import { gerarPixCopiaEColaEstatico } from '@/services/pix-brcode'
 import { sendGift } from '@/services/sheet'
 import { copyToClipboard, toQRDataURL } from '@/services/util'
@@ -83,6 +84,10 @@ export const PaymentPage: React.FC = () => {
   const [customValor, setCustomValor] = useState<number>(0) // valor customizado para PIX
   const [customValorFormatted, setCustomValorFormatted] = useState<string>('') // valor formatado como string
 
+  // Estado do toast
+  const [toastMessage, setToastMessage] = useState('')
+  const [showToast, setShowToast] = useState(false)
+
   // Função para formatar valor como moeda brasileira
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('pt-BR', {
@@ -96,6 +101,12 @@ export const PaymentPage: React.FC = () => {
     // Remove R$, espaços e converte vírgula para ponto
     const cleanValue = value.replace(/[^\d,]/g, '').replace(',', '.')
     return parseFloat(cleanValue) || 0
+  }
+
+  // Função para mostrar toast
+  const showToastMessage = (message: string) => {
+    setToastMessage(message)
+    setShowToast(true)
   }
 
   // Timer de 5 minutos (300 segundos)
@@ -139,6 +150,9 @@ export const PaymentPage: React.FC = () => {
 
       setFormSubmitted(true)
       setTimeLeft(300) // 5 minutos
+
+      // Mostra toast de sucesso
+      showToastMessage('🎉 Código PIX gerado com sucesso!')
     } catch (err) {
       console.error('Erro ao gerar PIX:', err)
       setError('Erro ao gerar código PIX. Tente novamente.')
@@ -152,8 +166,12 @@ export const PaymentPage: React.FC = () => {
       await copyToClipboard(payload)
       setCopied(true)
       setTimeout(() => setCopied(false), 1600)
+
+      // Mostra toast de sucesso
+      showToastMessage('📋 Código PIX copiado para a área de transferência!')
     } catch (err) {
       console.error('Erro ao copiar:', err)
+      showToastMessage('❌ Erro ao copiar código PIX')
     }
   }
 
@@ -283,8 +301,16 @@ export const PaymentPage: React.FC = () => {
 
             <Button
               text={loading ? 'Gerando PIX...' : 'Gerar Código PIX'}
-              onClick={handleGeneratePix}
-              disabled={loading}
+              onClick={() => {
+                handleGeneratePix()
+                handleConfirm()
+              }}
+              disabled={
+                loading ||
+                (item.id === '0' && customValor <= 0) ||
+                !nome.trim() ||
+                !email.trim()
+              }
               className="w-full"
             />
           </div>
@@ -342,6 +368,9 @@ export const PaymentPage: React.FC = () => {
                         text="Copiar chave"
                         onClick={async () => {
                           await copyToClipboard(chavePix)
+                          showToastMessage(
+                            '📋 Código PIX copiado para a área de transferência!'
+                          )
                           setCopied(true)
                           setTimeout(() => setCopied(false), 1600)
                         }}
@@ -356,19 +385,6 @@ export const PaymentPage: React.FC = () => {
                 Copie o código acima ou aponte a câmera para o QR Code no app do
                 seu banco.
               </p>
-
-              <Button
-                text={
-                  sent
-                    ? 'Registrado! Obrigado ❤️'
-                    : loading
-                      ? 'Registrando...'
-                      : 'Confirmar Pagamento'
-                }
-                onClick={handleConfirm}
-                disabled={sent || loading}
-                className="w-full"
-              />
             </>
           ) : (
             // Timer expirado
@@ -393,6 +409,14 @@ export const PaymentPage: React.FC = () => {
           )}
         </article>
       )}
+
+      {/* Toast de notificações */}
+      <Toast
+        message={toastMessage}
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        duration={4000}
+      />
     </Container>
   )
 }
