@@ -23,7 +23,7 @@ const Toast: React.FC<ToastProps> = ({
 
   return (
     <div
-      className={`fixed bottom-10 right-10 z-50 -translate-x-1/2 rounded bg-gray-900 px-4 py-2 text-white shadow-lg transition-all duration-300 ${show ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'} `}
+      className={`fixed bottom-10 right-10 z-50 -translate-x-1/2 rounded bg-gold-dark px-4 py-2 text-white shadow-lg transition-all duration-300 ${show ? 'translate-x-0 opacity-100' : 'pointer-events-none translate-x-full opacity-0'} `}
       style={{
         transitionProperty: 'transform, opacity',
         pointerEvents: show ? 'auto' : 'none'
