@@ -7,7 +7,7 @@ interface ContainerProps {
 export const Container: React.FC<ContainerProps> = ({ children }) => {
   return (
     <>
-      <main className="relative m-auto mb-4 flex w-dvw max-w-[430px] justify-center p-8 sm:p-8 md:max-w-[1440px] md:p-12">
+      <main className="relative m-auto flex w-dvw max-w-[430px] justify-center p-8 sm:p-8 md:max-w-[1440px] md:p-12">
         <img
           src={'/flor_rot_45_square1.png'}
           alt="Description of image"

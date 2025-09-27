@@ -3,6 +3,7 @@ import axios from 'axios'
 
 const ENDPOINT = import.meta.env.VITE_SHEETS_ENDPOINT as string
 const API_TOKEN = import.meta.env.VITE_API_TOKEN as string | undefined // opcional
+type RSVPTotalOK = { ok: true; total: number }
 
 if (!ENDPOINT) {
   throw new Error('SHEETS_ENDPOINT não configurado (VITE_SHEETS_ENDPOINT)')
@@ -42,6 +43,27 @@ export async function getGifts(): Promise<Gift[]> {
       err?.message ||
       'Erro ao carregar lista de presentes'
     console.error('[getGifts] ', msg, err?.response?.data)
+    throw new Error(msg)
+  }
+}
+
+export async function getRSVPTotal(): Promise<number> {
+  try {
+    const url = withAction('rsvp_total')
+    const { data } = await http.get<RSVPTotalOK | ERR>(url)
+    if (!data?.ok || typeof (data as RSVPTotalOK).total !== 'number') {
+      const msg =
+        ('error' in data && data.error) ||
+        'Falha ao carregar total de confirmados'
+      throw new Error(msg)
+    }
+    return (data as RSVPTotalOK).total
+  } catch (err: any) {
+    const msg =
+      err?.response?.data?.error ||
+      err?.message ||
+      'Erro ao carregar total de confirmados'
+    console.error('[getRSVPTotal] ', msg, err?.response?.data)
     throw new Error(msg)
   }
 }
