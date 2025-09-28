@@ -1,33 +1,17 @@
+// Gera Pix estático (PIM=11) “à prova de banco”
+const enc = new TextEncoder()
+const byteLen = (s: string) => enc.encode(s).length
+
 function tlv(id: string, value: string) {
-  const len = value.length.toString().padStart(2, '0')
-  return id + len + value
+  const len = byteLen(value)
+  if (len > 99) throw new Error(`Valor do TLV ${id} excede 99 bytes`)
+  return id + String(len).padStart(2, '0') + value
 }
 
 function removeAcentos(s: string) {
   return s.normalize('NFD').replace(/\p{Diacritic}/gu, '')
 }
 
-// Normaliza chave (básico) — ajuste conforme seu caso
-function normalizarChave(chave: string) {
-  let k = chave.trim()
-  // telefone: tira tudo que não dígito e prefixa + se tiver DDI
-  if (/^\+?\d[\d\s().-]+$/.test(k)) {
-    const digits = k.replace(/\D/g, '')
-    // assume Brasil se vier com 13 dígitos (55 + 11 dígitos) ou já vier com 12/13…
-    if (digits.startsWith('55')) return `+${digits}`
-    // se parecer número BR sem DDI (10-11 dígitos), prefixe 55
-    if (digits.length >= 10 && digits.length <= 11) return `+55${digits}`
-    return `+${digits}`
-  }
-  // cpf/cnpj: só dígitos
-  if (/^\d{11}$/.test(k) || /^\d{14}$/.test(k)) return k
-  // e-mail: lowercase
-  if (/^[^@]+@[^@]+$/.test(k)) return k.toLowerCase()
-  // chave aleatória (UUID): mantém
-  return k
-}
-
-// CRC16 CCITT-FALSE
 function crc16(payload: string) {
   let crc = 0xffff
   for (let i = 0; i < payload.length; i++) {
@@ -40,55 +24,65 @@ function crc16(payload: string) {
   return crc.toString(16).toUpperCase().padStart(4, '0')
 }
 
+function normalizarChave(chave: string) {
+  let k = chave.trim()
+  if (/^\+?\d[\d\s().-]+$/.test(k)) {
+    // telefone
+    const d = k.replace(/\D/g, '')
+    if (d.startsWith('55')) return `+${d}`
+    if (d.length >= 10 && d.length <= 11) return `+55${d}`
+    return `+${d}`
+  }
+  if (/^\d{11}$/.test(k) || /^\d{14}$/.test(k)) return k // cpf/cnpj
+  if (/^[^@\s]+@[^@\s]+$/.test(k)) return k.toLowerCase() // e-mail
+  return k // aleatória etc.
+}
+
 export type PixParams = {
   chave: string
   nome: string
   cidade: string
   valor?: number
   descricao?: string
+  txid?: string // default ***
 }
 
-/** Pix estático (PIM=11), com TXID = "***" para máxima compatibilidade */
 export function gerarPixCopiaEColaEstatico({
   chave,
   nome,
   cidade,
   valor,
-  descricao
+  descricao,
+  txid = '***'
 }: PixParams) {
-  // Merchant Account Information (26)
-  const gui = tlv('00', 'br.gov.bcb.pix')
-  const k = tlv('01', normalizarChave(chave))
-  const desc = descricao ? tlv('02', removeAcentos(descricao).slice(0, 50)) : ''
-  const mai = tlv('26', gui + k + desc)
+  // ----- 26 (MAI): calc “budget” ≤ 99 bytes -----
+  const gui = tlv('00', 'br.gov.bcb.pix') // 18 bytes
+  const k = tlv('01', normalizarChave(chave)) // 4 + |chave|
+  const base26 = gui + k
+  // espaço restante para "02" = 99 - bytes(base26) - 4 (overhead do 02)
+  const remaining = 99 - byteLen(base26) - 4
+  const descVal = descricao
+    ? removeAcentos(descricao).slice(0, Math.max(0, remaining))
+    : ''
+  const desc = descVal ? tlv('02', descVal) : ''
+  const mai = tlv('26', base26 + desc) // garante ≤ 99
 
-  const pfi = tlv('00', '01') // Payload Format Indicator
-  const pim = tlv('01', '11') // PIM: 11 = estático
-
-  const mcc = tlv('52', '0000') // <- mais seguro que 8398
-  const cur = tlv('53', '986') // BRL
-
+  // Demais campos
+  const pfi = tlv('00', '01')
+  const pim = tlv('01', '11')
+  const mcc = tlv('52', '0000')
+  const cur = tlv('53', '986')
   const amt =
     typeof valor === 'number' && valor > 0 ? tlv('54', valor.toFixed(2)) : ''
-
   const ctry = tlv('58', 'BR')
-
-  const nomeLimpo = removeAcentos(nome).trim()
-  const cidadeLimpa = removeAcentos(cidade).trim()
-
-  const nm = tlv(
-    '59',
-    (nomeLimpo.length >= 2 ? nomeLimpo : 'Presente Casamento').slice(0, 25)
-  )
+  const nm = tlv('59', (removeAcentos(nome).trim() || 'Recebedor').slice(0, 25))
   const ct = tlv(
     '60',
-    (cidadeLimpa.length >= 2 ? cidadeLimpa : 'Sao Paulo').slice(0, 15)
+    (removeAcentos(cidade).trim() || 'Sao Paulo').slice(0, 15)
   )
+  const adf = tlv('62', tlv('05', txid.trim() || '***')) // TXID
 
-  // Additional Data Field (62) com TXID (05) = "***"
-  const adf = tlv('62', tlv('05', '***')) // <- chave da compatibilidade
-
-  // Monta sem CRC primeiro
+  // CRC
   const semCRC =
     pfi + pim + mai + mcc + cur + amt + ctry + nm + ct + adf + '6304'
   const crc = crc16(semCRC)

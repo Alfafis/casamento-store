@@ -205,7 +205,15 @@ export const PaymentPage: React.FC = () => {
   if (!item) {
     return (
       <Container>
-        <Back onClick={() => navigate(-1)} />
+        <Back
+          onClick={() => {
+            if (window.history.length > 2) {
+              navigate(-1)
+            } else {
+              navigate('/')
+            }
+          }}
+        />
         <div className="py-8 text-center">
           <p className="text-sageDark text-lg">Presente não encontrado.</p>
           <p className="mt-2 text-sm text-sage">
@@ -219,7 +227,15 @@ export const PaymentPage: React.FC = () => {
   return (
     <Container>
       <div className="flex w-full flex-col items-center gap-4">
-        <Back onClick={() => navigate(-1)} />
+        <Back
+          onClick={() => {
+            if (window.history.length > 2) {
+              navigate(-1)
+            } else {
+              navigate('/')
+            }
+          }}
+        />
         <h3 className="text-center text-3xl font-bold text-sage">Presentear</h3>
         <p className="text-sageDark text-center text-xl font-medium">
           {item.titulo}
@@ -360,8 +376,8 @@ export const PaymentPage: React.FC = () => {
                     <span className="text-sageDark text-base">
                       Ou use a chave PIX:
                     </span>
-                    <div className="flex w-full items-center gap-2">
-                      <span className="text-sageDark flex-1 select-all rounded bg-sage/10 px-2 py-1.5 text-center font-mono text-lg">
+                    <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+                      <span className="text-sageDark flex-1 select-all rounded bg-sage/10 px-2 py-1.5 text-center font-mono text-sm lg:text-lg">
                         {chavePix}
                       </span>
                       <Button

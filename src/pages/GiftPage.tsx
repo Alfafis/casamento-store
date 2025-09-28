@@ -76,11 +76,16 @@ const GiftPage = () => {
       <section className="flex flex-col gap-4">
         <Back onClick={() => navigate('/')} />
         <div className="flex items-center gap-4">
-          <h3 className="mb-2 text-center text-xl font-semibold text-sage lg:mb-8 lg:mt-8 lg:text-4xl">
+          <h3 className="p-0 text-center text-xl font-semibold text-sage lg:mt-8 lg:text-4xl">
             Lista de Presentes
           </h3>
-          {(updating || loading) && <Loading size={30} />}
         </div>
+        {(updating || loading) && (
+          <p className="text-sageDark flex items-center gap-2 text-2xl">
+            {updating ? 'Atualizando...' : 'Carregando...'}
+            <Loading size={30} />
+          </p>
+        )}
         {!loading && items.length === 0 && (
           <p>Nenhum item disponível no momento.</p>
         )}

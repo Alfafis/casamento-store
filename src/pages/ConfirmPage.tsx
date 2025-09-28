@@ -17,7 +17,7 @@ const schema = z.object({
       2,
       'Nome deve ter pelo menos 2 caracteres e não pode ser apenas espaços'
     ),
-  email: z.string().trim().email('E-mail inválido'),
+  email: z.string().trim().email('E-mail inválido').optional(),
   telefone: z
     .string()
     .min(14, 'Telefone deve ter pelo menos 14 caracteres')
@@ -91,7 +91,15 @@ const ConfirmPage = () => {
   if (submitted) {
     return (
       <Container>
-        <Back onClick={() => navigate(-1)} />
+        <Back
+          onClick={() => {
+            if (window.history.length > 2) {
+              navigate(-1)
+            } else {
+              navigate('/')
+            }
+          }}
+        />
         <div className="text-center">
           <h3 className="mb-4 text-2xl text-sage">Confirmação Enviada! 💚</h3>
           <p className="mb-6 text-lg">
@@ -106,7 +114,15 @@ const ConfirmPage = () => {
   return (
     <Container>
       <div className="flex flex-col gap-4">
-        <Back onClick={() => navigate(-1)} />
+        <Back
+          onClick={() => {
+            if (window.history.length > 2) {
+              navigate(-1)
+            } else {
+              navigate('/')
+            }
+          }}
+        />
         <h3 className="text-2xl font-semibold text-sage">
           Confirmação de Presença
         </h3>
@@ -196,7 +212,7 @@ const ConfirmPage = () => {
 
         <Button
           type="submit"
-          text={'Enviar confirmação'}
+          text={loading ? 'Enviando...' : 'Enviar confirmação'}
           className="md:col-span-2"
           disabled={loading}
         />
