@@ -39,6 +39,7 @@ const ConfirmPage = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [closeConfirm, setCloseConfirm] = useState(true)
 
   const {
     register,
@@ -86,6 +87,31 @@ const ConfirmPage = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (closeConfirm) {
+    return (
+      <Container>
+        <Back
+          onClick={() => {
+            if (window.history.length > 2) {
+              navigate(-1)
+            } else {
+              navigate('/')
+            }
+          }}
+        />
+        <div className="text-center">
+          <h3 className="mb-4 text-2xl text-sage">Confirmação encerrada! 💚</h3>
+          <p className="mb-6 text-lg">
+            A lista de confirmação de presença já foi encerrada. <br />
+            Caso tenha qualquer dúvida ou necessidade especial, por favor entre
+            em contato diretamente com os noivos. 💚
+          </p>
+          <Button text="Voltar ao início" onClick={() => navigate('/')} />
+        </div>
+      </Container>
+    )
   }
 
   if (submitted) {
